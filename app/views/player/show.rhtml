@@ -1,0 +1,64 @@
+<% if @player.roles.size > 0 %>
+<div class="right-border" style="margin-right: 20px;">
+  <div class="page-heading">Classes</div>
+  <%= render :partial => "role", :collection => @player.roles %>
+
+</div>
+<% end %>  
+
+
+<div class="left" style="margin-right: 40px;">
+  <div class="page-heading">Player Details for <%= link_to @player.display_name, steam_profile_url(@player), {:target => "NEW"} %></div>
+  All time totals: <%= @player.kills %> kills, <%= @player.deaths %> deaths and <%= @player.suicides %> suicides.<br/>
+  Total Skill: <%= @player.skill %><br/>
+  Has played <%= distance_of_time_in_words(@player.total_time) %> total.<br/>
+  Last seen <%= ap_date_time(@player.last_connect) %> from <%= @player.ip %><br/>
+  This person's Steam ID is <%= @player.steam_id %><br/>
+</div>
+<br clear="left"/>
+<br clear="left"/>
+
+<% if @victims and @victims.size > 0 %>
+<div class="left" style="margin-right: 20px; width: 75%">
+  <table cellspacing="0" cellpadding="3" border="0" width="100%">
+  <tr>
+    <th><div class="page-heading">Victims</div></th>
+    <th>Killed</th>
+    <th>Died</th>
+    <th>K:D</th>
+  </tr>
+  <%= render :partial => "victim", :collection => @victims %>
+  </table>
+  <br/>
+  <%= will_paginate @victims %>
+</div>
+<% end %>
+
+<br clear="left"/>
+<br clear="left"/>
+
+<% if @aliases and @aliases.size > 1 %>
+<div style="margin-right: 20px;">
+  <div class="page-heading">Other Names</div>
+  <table><%= render :partial => "alias", :collection => @aliases %></table>
+</div>
+<% end %>
+
+
+<% if @triggers  %>
+<div class="page-heading">All-Time Special Events</div>
+<%= render :partial => "trigger", :collection => @triggers %>
+<br clear="left" />
+<% end %>
+
+<br clear="both" />
+
+<br clear="both" />
+
+<% content_for :header do %>
+  <%= render :partial => "header" %>
+<% end %>
+
+<% content_for :searchform do %>
+  <%= render :partial => "player/search_form" %>
+<% end %>

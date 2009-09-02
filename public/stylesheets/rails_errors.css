@@ -1,0 +1,65 @@
+
+pre {
+	background-color: #eee;
+	padding: 5px;
+	font-size: 9px;
+	border: 1px #777 dashed;
+}
+
+.fieldWithErrors {
+  padding: 1px;
+  background-color: #d00;
+  display: table;
+}
+
+#errorExplanation {
+  width: 400px;
+  border: 1px solid #900;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+	height: 24px;
+	text-align: left;
+	font-weight: bold;
+	padding: 10px 5px 5px 40px;
+	font-size: 12px;
+	margin: -7px;
+	color: #fff;
+	background: url(/images/cancel.png) no-repeat 4px 4px;
+	background-color: #c00;
+}
+
+#errorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+div.uploadStatus {
+  margin: 5px;
+}
+
+div.progressBar {
+  margin: 5px;
+}
+
+div.progressBar div.border {
+  background-color: #fff;
+  border: 1px solid grey;
+  width: 100%;
+}
+
+div.progressBar div.background {
+  background-color: #333;
+  height: 18px;
+  width: 0%;
+}

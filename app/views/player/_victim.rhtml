@@ -1,0 +1,12 @@
+<tr>
+  <td><%= link_to victim.display_name, player_show_url({:server_id => @server.server_id, :player_id => victim.player_id}) %></td>
+  <td><%= victim.deaths %></td>
+  <td><% vk = victim.victim_kills(@kill_event.id,@player.id) %><%= vk %></td>
+  <td>
+    <% if vk.to_i > 0 %>
+      <%= sprintf("%0.2f",(victim.deaths.to_f / vk.to_f) )%>
+    <% else %>
+      <%= victim.deaths.to_f %>
+    <% end %>
+  </td>
+</tr>

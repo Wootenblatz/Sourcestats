@@ -1,0 +1,47 @@
+body {
+	font-family: GillSans, Calibri, Trebuchet, sans-serif;
+	font-size: 0.9em;
+}
+
+p {
+	font-size: 0.9em;
+}
+
+a, a:visited, a:hover, a:active {
+	color: #900;
+	text-decoration: none;
+}
+
+.small {
+	font-size: 0.7em;
+}
+
+
+.page-heading {
+	font-family: GillSans, Trebuchet, Calibri, sans-serif;
+	font-weight: bold;
+	font-size: 1.3em;
+	line-height: 1.5em;
+	text-decoration: none;
+}
+
+.heading {
+	font-family: GillSans, Trebuchet, Calibri, sans-serif;
+	font-weight: bold;
+	font-size: 1em;
+	line-height: 1.1em;
+	color: #555;
+	text-decoration: none;
+}
+
+#header, #content, #footer {
+	text-align: left;	
+}
+
+#server-list-header, #player-list-header {
+	font-family: GillSans, Trebuchet, Calibri, sans-serif;
+	font-weight: bold;
+	color: #999;
+	font-size: 1em;
+}
+

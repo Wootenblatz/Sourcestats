@@ -1,0 +1,56 @@
+<% if @top10 and @top10.size > 0 %>
+  <div class="page-heading">Top scores since <%= ap_date(@server.start) %></div>
+  <% @count = 1 %>
+  <div id="player-list-header">
+  	<div class="list-count">&nbsp;</div>
+  	<div class="player-list-name">Name</div>
+  	<div class="player-list-kills">Kills</div>
+  	<div class="player-list-deaths">Deaths</div>
+  	<div class="player-list-efficiency">K:D&nbsp;</div>
+  	<div class="player-list-skill">Score</div>
+  </div>
+  <br clear="both" />
+  <%= render :partial => "player/player_list", :collection => @top10 %>
+<% else %>
+  <div class="page-heading">No one has played lately</div>
+<% end %>
+<br/>
+<%= link_to("View All", player_list_url({:server_id => @server.server_id, :page => 1})) %>
+<br/><br/>
+
+<% if @triggers.size > 0 %>
+	<div class="page-heading">Special Events</div>
+	<ul class="column">
+		<%= render :partial => "trigger_list", :collection => @triggers %>
+	</ul>
+	<br clear="both"/>
+	<br clear="both"/>
+<% end %>
+
+<% if @roles.size > 0 %>
+	<div class="page-heading">Roles</div>
+	<%= debug @roles %>
+	<br/><br/>
+<% end %>
+
+<% if @events.size > 0 %>
+	<div class="page-heading">Events</div>
+	<%= debug @events %>
+	<br/><br/>
+<% end %>
+
+<% if @weapons.size > 0 %>
+	<div class="page-heading">Frequently used weapons</div>
+	<%= debug @weapons %>
+	<br/><br/>
+<% end %>
+
+<% if @maps.size > 0 %>
+	<div class="page-heading">Favorite maps</div>
+	<%= debug @maps %>
+	<br/><br/>
+<% end %>
+
+<% content_for :searchform do %>
+  <%= render :partial => "player/search_form" %>
+<% end %>

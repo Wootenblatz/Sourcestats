@@ -1,0 +1,36 @@
+<div class="page-heading">Player ranking since <%= ap_date(@server.start) %></div>
+
+<div class="left"><%= will_paginate @players %></div>
+<br clear="both" />
+
+<div id="player-list-header">
+	<div class="list-count">&nbsp;</div>
+	<div class="player-list-name">Name</div>
+	<div class="player-list-kills">Kills</div>
+	<div class="player-list-deaths">Deaths</div>
+	<div class="player-list-efficiency">K:D</div>
+	<div class="player-list-skill">Score</div>
+</div>
+<br clear="both" />
+<% if @players.total_entries > 0 %>
+  <% @count = (params[:page].to_i * Player.per_page) - (Player.per_page - 1)%>
+  <%= render :partial => "player_list", :collection => @players %>
+<% else %>
+  <% if params[:player] and params[:player][:search] %>
+    No players found matching the search term "<%= params[:player][:search] %>".
+  <% else %>
+    No players in the system.
+  <% end %>
+<% end %>
+<br clear="both" />
+<%= will_paginate @players %>
+<br clear="both" />
+<br clear="both" />
+
+<% content_for :header do %>
+  - <%= link_to("Player Ranking", player_list_url({:server_id => @server.server_id, :page => 1})) %>
+<% end %>
+
+<% content_for :searchform do %>
+  <%= render :partial => "player/search_form" %>
+<% end %>

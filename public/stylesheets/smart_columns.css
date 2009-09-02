@@ -1,0 +1,38 @@
+ul.column{
+	width: 100%;
+	padding: 0;
+	margin: 10px 0 50px;
+	list-style: none;
+}
+ul.column li {
+	float: left;
+	width: 32%;
+	padding: 0;
+	margin: 5px 0;
+	display: inline;
+}
+.block {
+	height: 60px;
+	font-size: 1em;
+	margin-right: 10px;
+	padding: 20px;
+	background: #e1e0d3;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+.block h2 {
+	font-size: 1.8em;
+}
+
+.block_disabled img {
+	width: 89%;
+	padding: 5%;
+	margin: 0 auto;
+	background:#fff;
+	-ms-interpolation-mode: bicubic;
+	display: block;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}

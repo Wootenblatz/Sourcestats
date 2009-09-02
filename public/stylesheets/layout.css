@@ -1,0 +1,75 @@
+body {
+	border-top: 5px #A00 solid;
+	background-color: #111;
+	padding: 0;
+	margin: 0;
+}
+
+#header, #content, #footer {
+	width: 900px;
+	height: auto;
+	display: block;
+	overflow: hidden;
+	float: none;
+	margin-top: 15px;
+	margin-right: 0px auto;
+	margin-bottom: 0px;
+	margin-left: 0px auto;
+	padding: 0;
+}
+
+.list-count {
+	margin: 0px 10px 0px 4px; 
+	width: 30px; 
+	vertical-align: top;
+	float: left;
+}
+
+.server-list-line, .player-list-line {
+	float: none;
+	border-bottom: 1px #d8d8d8 dashed;
+	height: auto;
+	overflow: hidden;
+	display: block;
+	margin-bottom: 4px;
+	padding-bottom: 4px;
+	width: 100%;
+	
+}
+
+#server-list-header, #player-list-header {
+	border: 0;
+	vertical-align: middle;
+}
+
+.trigger-list, .server-list-field, .player-list-name, .player-list-field, .player-list-kills, .player-list-deaths, .player-list-skill, .player-list-efficiency {
+	vertical-align: middle;
+	padding: 2px;
+	float: left;
+	display: block;
+	text-align: left;
+}
+
+
+
+.trigger-list { 
+	margin-bottom: 10px; 
+	margin-right: 10px; 
+	float: left; 
+	width: 45%; 
+	height: auto; 
+	border-bottom: 1px #d8d8d8 dashed;
+	padding-bottom: 10px;
+}
+
+.server-list-field { margin-right: 10px;}
+.player-list-name { width: 50%; } 
+.player-list-kills { width: 10%; }
+.player-list-deaths { width: 10%; }
+.player-list-skill { width: 10%; }
+.player-list-efficiency { width: 10%; }
+
+.left, .left-border { float: left; }
+.right, .right-border { float: right; }
+
+.left-border, .right-border { border: 1px #d8d8d8 solid; padding: 2px;} 

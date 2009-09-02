@@ -1,0 +1,53 @@
+<fieldset>
+	<legend><%= @server.name %> - Data Overview</legend>
+	<%= @server.events.size %> <%= link_to("Events", event_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.triggers.size %> <%= link_to("Triggers", trigger_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.weapons.size %> <%= link_to("Weapons", weapon_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.maps.size %> <%= link_to("Maps", map_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.roles.size %> <%= link_to("Roles", role_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.teams.size %> <%= link_to("Teams", team_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+</fieldset>
+
+<br/>
+
+<% form_for :server, @server, :url => { :action => "edit", :id => @server.id } do |f| %>
+<%= error_messages_for :server %>
+<fieldset>
+	<legend>Edit Server Information</legend>
+	<ol>
+    <li>
+    	<label for="name">Name:</label><br/>
+      <%= f.text_field :name, :size => 40 %>
+    </li>
+    <li>
+    	<label for="description">Description:</label><br/>
+    <%= f.text_area :description, :rows => 5, :cols => 40 %>
+    </li>
+  	<li>
+  		<label for="max_players">Player Limit</label><br/>
+      <%= f.text_field :max_players, :size => 3 %>        
+    </li>
+  	<li>
+  		<label for="ip">IP Address</label><br/>
+      <%= f.text_field :ip, :size => 16 %>        
+    </li>
+  	<li>
+  		<label for="port">Network Port</label><br/>
+  		<%= f.text_field :port, :size => 6 %>
+  	</li>
+  	<li>
+  		<label for="timezone">Timezone</label> <br/>
+  		<%= f.time_zone_select :timezone, ActiveSupport::TimeZone.all.sort %>
+    </li>
+  	<li>
+  		<label for="timeframe">Number of days to use in statistics</label><%= f.text_field :timeframe, :size => 3 %>
+  		<br/>
+  		<font class="small">Why have a limit?  The shorter the period the more possibility of change there is.  This makes your statistics more dynamic and lets the players feel like they have a chance at making it to the top.  The database also does a better job of retrieving results if we limit how many we look at.</font>
+    </li>
+  </ol>
+</fieldset>
+  <%= f.submit "Save" %> <%= link_to "Cancel", :action => "list" %>
+<% end %>
+
+
+

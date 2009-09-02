@@ -1,0 +1,12 @@
+<% admin_link = admin_link_to(link_to("Admin", :controller => "server", :action => "edit", :id => server.id)) %>
+<div class='server-list-line'>
+	<div class='server-list-field'>
+		<div class="page-heading"><%= link_to("#{server.name}", server_show_url({:id => server.server_id })) %></div>
+		<%= server.description %> --  <%= "#{server.ip}:#{server.port}" %> --
+		<%= server.max_players > 0 ? server.max_players : 24 %> player limit
+		<% if admin_link.size > 0 %>
+		 -- <%= admin_link %>
+		<% end %>
+		
+	</div>
+</div>

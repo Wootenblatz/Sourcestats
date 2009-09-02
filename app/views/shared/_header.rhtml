@@ -1,0 +1,19 @@
+<a href="/"><img src="/images/logo.png" border="0" /></a>
+<br clear="both" />
+<div class="left">
+<%= link_to "Blog", "http://unrife.net/2009/06/09/source-dedicated-server-statistics" %> - 
+<%= link_to "Server list", :controller => "server", :action => "list", :page => 1 %>
+<% if @server %>
+- <%= link_to(@server.name, server_show_url({:id => @server.server_id})) %>
+  <% admin_link = admin_link_to(link_to("Admin", :controller => "server", :action => "edit", :id => @server.server_id)) %>
+  <% if admin_link.size > 0 %>
+  - <%= admin_link %>
+  <% end %>
+<% end %>
+<%= (header = yield :header) ? header : "" %>
+</div>
+
+<div class="right">
+<%= (searchform = yield :searchform) ? searchform : render(:partial => 'shared/search_form') %>
+</div>
+<br clear="both" />

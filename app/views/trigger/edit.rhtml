@@ -1,0 +1,36 @@
+<% form_for :trigger, @trigger, :url => { :action => "edit", :id => @trigger.id } do |f| %>
+<%= error_messages_for :trigger %>
+<fieldset>
+	<legend>Edit trigger Information</legend>
+	<ol>
+    <li>
+    	<label for="highlight">Highlight this trigger?</label><br/>
+      <%= f.select :highlight, %w{No Yes} %>
+    </li>
+    <li>
+    	<label for="name">Raw trigger name:</label>
+      <%= @trigger.name %><%= f.hidden_field :name, :value => @trigger.name %>
+    </li>
+    <li>
+    	<label for="label">Display Label:</label><br/>
+      <%= f.text_field :label, :size => 40 %>
+    </li>
+    <li>
+    	<label for="player_title">Title to give players:</label><br/>
+      <%= f.text_field :player_title, :size => 40 %>
+    </li>
+    <li>
+    	<label for="bonus">Skill bonus:</label><br/>
+      <%= f.text_field :bonus, :size => 4 %>
+    </li>    
+    
+  </ol>
+</fieldset>
+  <%= f.submit "Save" %> <%= link_to "Cancel", :action => "list", :server_id => @server.server_id, :page => 1 %>
+<% end %>
+
+
+
+
+
+

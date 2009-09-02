@@ -1,0 +1,19 @@
+<% top_player = trigger_list.top_players_for_period(@server.start)[0] %>
+<% runner_up = trigger_list.top_players_for_period(@server.start)[1] %>
+<li>
+    <div class="block">
+		<div class="heading">
+		<%= trigger_list.player_title ? trigger_list.player_title : trigger_list.name %></div>
+		<b><%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %> </b> with <b><%= top_player.times %> </b>
+		<%= trigger_list.label ? trigger_list.label : trigger_list.name.pluralize %>. <br/>
+
+    <% if runner_up %>
+		Runner up is <%= link_to runner_up.display_name, player_show_url({:server_id => @server.server_id, :player_id => runner_up.player_id}) %> 
+		with <%= runner_up.times %>.<br/>
+		<% end %>
+		<%= trigger_list.uses %> total.
+
+
+    </div>
+</li>
+
