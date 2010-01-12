@@ -1,5 +1,8 @@
 class Player < ActiveRecord::Base
   @player_r = Regexp.new('^(.+)<(\d+)><(.+?)><(.*)>')
+  #Coach<4><BOT><Survivor><Coach><ALIVE><100+0><setpos_exact 831.96 5457.06 2718.03; setang 8.73 201.79 0.00><Area 12063>
+  @player_extended_r = Regexp.new('^(.+)<(\d+)><([^>]*)><([^>]+)><([^>]+)><([^>]+)><([^>]+)><([^>]+)>')
+
   belongs_to :server
   has_many :aliases
   has_many :player_events
@@ -39,7 +42,21 @@ class Player < ActiveRecord::Base
     player_info['steam_id'] = ""
     player_info['team_name'] = ""
     
-    if values = player_string.scan(@player_r)[0]
+    if values = player_string.scan(@player_extended_r)[0]
+      #Coach<4><BOT><Survivor><Coach><ALIVE><100+0><setpos_exact 831.96 5457.06 2718.03; setang 8.73 201.79 0.00><Area 12063>
+      player_info['name'] = values[0].gsub(/"/,"")
+      player_info['slot'] = values[1]
+      if not values[2]
+        values[2] = "BOT"
+      end
+      player_info['steam_id'] = values[2]
+      player_info['team_name'] = values[3]      
+      player_info['model'] = values[4]
+      player_info['state'] = values[5]
+      player_info['health'] = values[6]
+      player_info['position'] = values[7]
+      player_info['arena'] = values[8]
+    elsif values = player_string.scan(@player_r)[0]
       player_info['name'] = values[0].gsub(/"/,"")
       player_info['slot'] = values[1]
       player_info['steam_id'] = values[2]
@@ -48,19 +65,28 @@ class Player < ActiveRecord::Base
     
     return player_info
   end
+  
+  def bot?
+    return false    
+  end
 
   def self.find_by_steam_id(server_id,player_info)
-    player = Player.find(:first,:conditions => ["server_id = ? and steam_id = ?", server_id,player_info['steam_id']])
-    if not player or player.id.size == 0
-      player = Player.new
-      player.server_id = server_id
-      player.name = player_info['name']
-      player.steam_id = player_info['steam_id']
-      player.kills = 0
-      player.deaths = 0
-      player.skill = 1000.0
-      player.last_connect = Time.new
-      player.save
+    player = nil
+    if player_info["steam_id"] != "BOT" and player_info["steam_id"] != ""
+      player = Player.find(:first,:conditions => ["server_id = ? and steam_id = ?", server_id,player_info['steam_id']])
+      if not player or player.id.size == 0
+        player = Player.new
+        player.server_id = server_id
+        player.name = player_info['name']
+        player.steam_id = player_info['steam_id']
+        player.kills = 0
+        player.deaths = 0
+        player.skill = 1000.0
+        player.last_connect = Time.new
+        player.save
+      end
+    else
+      player = Bot.load_bot(server_id,player_info)
     end
     return player
   end  
@@ -68,21 +94,29 @@ class Player < ActiveRecord::Base
   def compute_skill(victim,weapon)
     player_skill = skill
     skills = Array.new
-    if id > 0 and victim and victim.id > 0 and id != victim.id
-      if not player_skill or player_skill =~ /\D/ or player_skill < 1000
-        player_skill = 1000.0
-      end
-    
-      if not victim.skill or victim.skill =~ /\D/ or victim.skill < 1000
-        victim.skill = 1000.0
-      end
-    
-      bonus = 1.0
-      if weapon.bonus > 0.0
-        bonus = weapon.bonus
-      end
-      skills[0] = sprintf("%02.2f", (((victim.skill / player_skill) * bonus) * 10.0)).to_f
-      skills[1] = sprintf("%02.2f", (((player_skill / victim.skill) * bonus) * 10.0)).to_f
+    if victim["steam_id"] == "Bot"
+      skills[0] = player_skill + 0.1
+      skills[1] = 0
+    else
+      if id > 0 and victim and victim.id > 0 and id != victim.id and not victim.bot?
+        if not player_skill or player_skill =~ /\D/ or player_skill < 1000
+          player_skill = 1000.0
+        end
+
+        if not victim.skill or victim.skill =~ /\D/ or victim.skill < 1000
+          victim.skill = 1000.0
+        end
+
+        bonus = 1.0
+        if weapon.bonus > 0.0
+          bonus = weapon.bonus
+        end
+        skills[0] = sprintf("%02.2f", (((victim.skill / player_skill) * bonus) * 10.0)).to_f
+        skills[1] = sprintf("%02.2f", (((player_skill / victim.skill) * bonus) * 10.0)).to_f
+      elsif victim.bot?
+        skills[0] = player_skill + victim.bonus
+        skills[1] = 0
+      end      
     end
     return skills
   end
@@ -100,7 +134,11 @@ class Player < ActiveRecord::Base
   end
   
   def victims(kill_event_id, page = 1)
-    Player.paginate(:page => page, :select => "players.*, count(player_events.id) as deaths", :conditions => ["player_events.player_id = ?", id], :joins => "inner join player_events on player_events.victim_id = players.id", :group => "player_events.victim_id", :order => "deaths desc")
+    Player.paginate(:page => page, :select => "players.*, count(player_events.id) as deaths", :conditions => ["player_events.player_id = ? and player_events.bot_victim = 0", id], :joins => "inner join player_events on player_events.victim_id = players.id", :group => "player_events.victim_id", :order => "deaths desc")
+  end
+  
+  def bot_victims(kill_event_id, page = 1)
+    Bot.paginate(:page => page, :select => "bots.*, count(player_events.id) as deaths", :conditions => ["player_events.player_id = ? and bot_victim = 1", id], :joins => "inner join player_events on player_events.victim_id = bots.id", :group => "player_events.victim_id", :order => "deaths desc")
   end
   
   def victim_kills(kill_event_id, victim_id)

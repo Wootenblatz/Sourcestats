@@ -37,6 +37,25 @@
 <br clear="left"/>
 <br clear="left"/>
 
+<% if @bot_victims and @bot_victims.size > 0 %>
+<div class="left" style="margin-right: 20px; width: 75%">
+  <table cellspacing="0" cellpadding="3" border="0" width="100%">
+  <tr>
+    <th><div class="page-heading">Bot Victims</div></th>
+    <th>Killed</th>
+    <th>Died</th>
+    <th>K:D</th>
+  </tr>
+  <%= render :partial => "victim", :collection => @bot_victims %>
+  </table>
+  <br/>
+  <%= will_paginate @bot_victims %>
+</div>
+<% end %>
+
+<br clear="left"/>
+<br clear="left"/>
+
 <% if @aliases and @aliases.size > 1 %>
 <div style="margin-right: 20px;">
   <div class="page-heading">Other Names</div>
@@ -45,7 +64,7 @@
 <% end %>
 
 
-<% if @triggers  %>
+<% if @triggers and @triggers.size > 0 %>
 <div class="page-heading">All-Time Special Events</div>
 <%= render :partial => "trigger", :collection => @triggers %>
 <br clear="left" />

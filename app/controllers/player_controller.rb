@@ -23,6 +23,7 @@ class PlayerController < PublicController
     @kill_event = Event.find(:first,:conditions => ["server_id = ? and name = ?", @server.id, "killed"])
     if @kill_event
       @victims = @player.victims(@kill_event.id, params[:page])
+      @bot_victims = @player.bot_victims(@kill_event.id, params[:page])
     end
     @triggers = @player.triggers
     add_to_seo("#{@player.display_name}'s Player Page",@player.display_name,"#{@player.display_name}'s Player Page.")

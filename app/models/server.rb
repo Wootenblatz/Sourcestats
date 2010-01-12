@@ -9,6 +9,7 @@ class Server < ActiveRecord::Base
   has_many :teams
   has_many :maps
   has_many :weapons
+  has_many :bots
   
   validates_numericality_of :max_players
   validates_presence_of :name

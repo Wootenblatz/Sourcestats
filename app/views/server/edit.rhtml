@@ -6,6 +6,7 @@
 	<%= @server.maps.size %> <%= link_to("Maps", map_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
 	<%= @server.roles.size %> <%= link_to("Roles", role_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
 	<%= @server.teams.size %> <%= link_to("Teams", team_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
+	<%= @server.bots.size %> <%= link_to("Bots", bot_list_url({:server_id => @server.server_id, :page => 1}))%><br/>
 </fieldset>
 
 <br/>

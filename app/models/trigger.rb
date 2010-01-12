@@ -8,6 +8,7 @@ class Trigger < ActiveRecord::Base
       trigger = Trigger.new
       trigger.server_id = server_id
       trigger.name = trigger_name
+      trigger.label = trigger_name
       trigger.save
     end
     return trigger
