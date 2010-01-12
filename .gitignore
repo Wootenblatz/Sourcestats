@@ -6,3 +6,6 @@ doc/*
 ._*
 db/schema.rb
 db/sphinx
+:2e*
+.AppleDouble
+

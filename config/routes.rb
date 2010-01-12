@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.map_list '/map/list/:server_id/:page', :controller => "map", :action => "list", :requirements => { :page => /\d+/ }
   map.role_list '/role/list/:server_id/:page', :controller => "role", :action => "list", :requirements => { :page => /\d+/ }
   map.team_list '/team/list/:server_id/:page', :controller => "team", :action => "list", :requirements => { :page => /\d+/ }
+  map.bot_list '/bot/list/:server_id/:page', :controller => "bot", :action => "list", :requirements => { :page => /\d+/ }
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
   # The priority is based upon order of creation: first created -> highest priority.

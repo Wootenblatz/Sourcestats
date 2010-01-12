@@ -2,13 +2,24 @@
 require 'socket'
 
 class SourcestatsLogger
-  @datetime_r = Regexp.new('^(.*)L (\d\d\/\d\d\/\d\d\d\d - \d\d:\d\d:\d\d:) ')
-  @r1 = Regexp.new('^"([^"]+)" ([^"\(]+) "([^"]+)" ([^"\(]+) "([^"]+)"(.*)')
-  @r2 = Regexp.new('^"([^"]+)" ([^"\(]+) "([^"]+)"(.*)')
-  @r3 = Regexp.new('^"([^"]+)" ([^\(]+)(.*)')
-  @r4 = Regexp.new('^Team "([^"]+)" ([^"\(]+) "([^"]+)"(.*)')
-  @r5 = Regexp.new('^([^"\(]+) "([^"]+)"(.*)')
-  @properties_r = Regexp.new('^\s*\((\S+)(?: "([^"]+)")?\)')
+  @regexps = {
+    "datetime" => Regexp.new('^(.*)L (\d\d\/\d\d\/\d\d\d\d - \d\d:\d\d:\d\d:) '),
+    "r1" => Regexp.new('^"([^"]+)" ([^"\(]+) "([^"]+)" ([^"\(]+) "([^"]+)"(.*)'),
+    "r2" => Regexp.new('^"([^"]+)" ([^"\(]+) "([^"]+)"(.*)'),
+    "r3" => Regexp.new('^"([^"]+)" ([^\(]+)(.*)'),
+    "r4" => Regexp.new('^Team "([^"]+)" ([^"\(]+) "([^"]+)"(.*)'),
+    "r5" => Regexp.new('^([^"\(]+) "([^"]+)"(.*)'),
+    "properties" => Regexp.new('^\s*\((\S+)(?: "([^"]+)")?\)')
+  }
+  
+  @key_orders = {
+    "_master_list" => ["player","event1","noun1","event2","noun2","properties","team","label"],
+    "r1" => ["player","event1","noun1","event2","noun2","properties"],
+    "r2" => ["player","event1","noun1","properties"],
+    "r3" => ["player","event1","properties"],
+    "r4" => ["team","event1","noun1","properties"],
+    "r5" => ["event1","noun1","properties"],
+  }
 
   def self.listen
     socket = UDPSocket.new
@@ -72,14 +83,19 @@ class SourcestatsLogger
       
       if msg and msg.size > 0
         # Strip the date off, we'll just use our database time
-        event_datetime = msg.scan(@datetime_r)
+        event_datetime = msg.scan(@regexps["datetime"])
         if event_datetime[0] and event_datetime[0][1]
           event_datetime = Time.parse(event_datetime[0][1])
-          msg.gsub!(@datetime_r,"")
+          msg.gsub!(@regexps["datetime"],"")
 
           results = Hash.new
           player = Array.new
           properties = Hash.new
+          
+          # Check to see if this includes a L4D style log prefix
+          if msg =~ /^\(([^\)]+)\)/
+            msg.gsub!(/^\(([^\)]+)\)/,"")
+          end
           results = self.parse(msg)
           self.store_result(server,results,event_datetime)
         end
@@ -89,7 +105,7 @@ class SourcestatsLogger
   
   def self.get_properties(properties_string)
     properties = Hash.new
-    properties_string.sub(@properties_r,'').each do |p|
+    properties_string.sub(@regexps["properties"],'').each do |p|
       if (p[0][2])
         properties["#{p[0][1]}"] = p[0][2]
       else
@@ -101,46 +117,15 @@ class SourcestatsLogger
 
   def self.parse(log_line)
     results = Hash.new
-    if values = log_line.scan(@r1)[0] 
-        results['team'] = nil
-        results['player'] = values[0] 
-        results['event1'] = values[1]
-        results['noun1'] = values[2] 
-        results['event2'] = values[3]
-        results['noun2'] = values[4] 
-        results['properties'] = values[5]
-    elsif values = log_line.scan(@r2)[0]
-        results['team'] = nil
-        results['player'] = values[0]
-        results['event1'] = values[1]
-        results['noun1'] = values[2]
-        results['event2'] = nil
-        results['noun2'] = nil
-        results['properties'] = values[3]
-    elsif values = log_line.scan(@r3)[0]
-        results['team'] = nil
-        results['player'] = values[0]
-        results['event1'] = values[1]
-        results['noun1'] = nil
-        results['event2'] = nil
-        results['noun2'] = nil
-        results['properties'] = values[2]
-    elsif values = log_line.scan(@r4)[0]
-        results['team'] = values[0]
-        results['player'] = nil
-        results['event1'] = values[1]
-        results['noun1'] = values[2]
-        results['event2'] = nil
-        results['noun2'] = nil
-        results['properties'] = values[3]
-    elsif values = log_line.scan(@r5)[0]
-        results['team'] = nil
-        results['player'] = nil
-        results['event1'] = values[0]
-        results['noun1'] = values[1]
-        results['event2'] = nil
-        results['noun2'] = nil
-        results['properties'] = values[2]
+    index = 0
+    @key_orders["_master_list"].each { |key| results["#{key}"] = nil }
+    1.upto(5) do |x|
+      if index == 0 and values = log_line.scan(@regexps["r#{x}"])[0]
+        @key_orders["r#{x}"].each do |key|
+          results["#{key}"] = values[index]
+          index += 1
+        end
+      end
     end
     return results
   end
@@ -167,20 +152,26 @@ class SourcestatsLogger
       noun2 = results['noun2']
       properties = results['properties']
       disconnect = 0
+
+      if player_str 
+        player = self.player_details(server.id,player_str)
+      end
+      if not player or player["bot"]
+        return
+      end
       
       if event1 and event1.size > 1            
         if player_str and player_str.size > 0
-          player = self.player_details(server.id,player_str)
-          active_player = ActivePlayer.find_by_steam_id(server.id,player["info"],event_datetime)
+            active_player = ActivePlayer.find_by_steam_id(server.id,player["info"],event_datetime)
         end
-        if not team and player_str and noun1 and event2 and noun2 and player and player["object"].id > 0          
+                
+        if not team and player_str and noun1 and event2 and noun2 and player and player["object"].id   > 0          
           if event1 == "killed" or event1 == "attacked"
             victim = self.player_details(server.id,noun1)
             active_victim = ActivePlayer.find_by_steam_id(server.id,victim["info"],event_datetime)
             
             weapon = Weapon.find_by_name(server.id,noun2)
             weapon_id = weapon.id
-            
             if player["id"] == victim["object"].id
               player["object"].suicides += 1
               active_player.suicides += 1
@@ -190,25 +181,27 @@ class SourcestatsLogger
               active_player.team_kills += 1
               player["object"].skill -= 25
               player["skill_change"] = -25
-            elsif victim and victim["object"].id > 0
+            elsif victim and victim["object"].id > 0 and not victim["bot"]
               skills = player["object"].compute_skill(victim["object"],weapon)
               player["skill_change"] = skills[0]
               player["object"].skill += skills[0]
               player["object"].kills += 1
 
-              victim["skill_change"] = -1 * skills[1]
-              victim["object"].skill -= skills[1]
-              victim["object"].deaths += 1
+              if not victim["bot"]
+                victim["skill_change"] = -1 * skills[1]
+                victim["object"].skill -= skills[1]
+                victim["object"].deaths += 1
+                active_victim.deaths += 1
+              end
               #puts "Skill delta #{skills[0]} / #{skills[1]} || Results #{player["object"].skill} / #{victim["object"].skill}"
               active_player.kills += 1
-              active_victim.deaths += 1
               
               # Check for the custom kill property
               if event1 == "killed"
                 properties = results["properties"].scan(/\((.+?)\)/)
                 for property in properties
-                  if property[0] =~ /customkill \"(\w+?)\"/
-                    trigger = Trigger.find_by_name(server.id,$1)
+                  if property[0] =~ /customkill \"(\w+?)\"/ or property[0] =~ /headshot/
+                    trigger = Trigger.find_by_name(server.id,($1||"headshot"))
                     if trigger.bonus != 0
                       player["object"].skill += trigger.bonus
                       player["skill_change"] += trigger.bonus
@@ -216,8 +209,6 @@ class SourcestatsLogger
                   end
                 end
               end
-            else
-              puts "Error computing skill for victim #{victim["object"].name}"
             end
           elsif event1 == "triggered" and event2 == "against"            
             victim = self.player_details(server.id,noun2)
@@ -246,9 +237,9 @@ class SourcestatsLogger
             player["object"].name = noun1
             active_player.name = noun1
             Alias.use_alias(server.id,player["object"].id,noun1)
-          elsif event1 == "joined team"
+          elsif event1 == "joined team" and not player["bot"]
             active_player.team = noun1
-          elsif event1 == "committed suicide with"
+          elsif event1 == "committed suicide with" and not player["bot"]
             weapon = Weapon.find_by_name(server.id,noun1)
             weapon_id = weapon.id
             if player["object"] and player["object"].skill > 1025
@@ -261,19 +252,19 @@ class SourcestatsLogger
             end
             player["object"].suicides += 1            
             active_player.suicides += 1
-          elsif event1 == "triggered" and player["object"] and player["object"].id > 0
+          elsif event1 == "triggered"  and not player["bot"]and player["object"] and player["object"].id > 0
             trigger = Trigger.find_by_name(server.id,noun1)
             if trigger.bonus != 0
               player["object"].skill += trigger.bonus
               player["skill_change"] = trigger.bonus
             end
-          elsif event1 == "changed role to"
+          elsif event1 == "changed role to" and not player["bot"]
             role = Role.find_by_name(server.id,noun1)
             role_id = role.id              
             active_player.role = noun1
           end
         elsif not team and player_str and not noun1 and not event2 and not noun2
-          if event1 == "entered the game"
+          if event1 == "entered the game" and not player["bot"]
             Alias.use_alias(server.id,player["id"],player["info"]['name'])
             slot = player["info"]['slot']
             active_player.enter_map(player["info"],event_datetime)
@@ -324,7 +315,7 @@ class SourcestatsLogger
       save = 0
     end   
 
-    if save > 0
+    if save > 0 
       event1.gsub!(/"/, '')
       if event1 !~ /=/
         event = Event.find_by_name(server.id,event1)
@@ -336,12 +327,14 @@ class SourcestatsLogger
               end
               role_id = Role.find_by_name(server.id, active_player.role).id
             end
-            player_event = self.save_player_event(event,event_datetime,player,active_player,victim,active_victim,weapon_id,map_id,role_id,trigger)
-            if player and player["object"] and player["object"].changed?
-              player["object"].save
-            end
-            if victim and victim["object"] and victim["object"].changed?
-              victim["object"].save
+            if not player["bot"]
+              player_event = self.save_player_event(event,event_datetime,player,active_player,victim,active_victim,weapon_id,map_id,role_id,trigger)
+              if player and player["object"] and player["object"].changed?
+                player["object"].save
+              end
+              if victim and not victim["bot"] and victim["object"] and victim["object"].changed?
+                victim["object"].save
+              end
             end
           elsif trigger_team_players.size > 0
             for player in trigger_team_players
@@ -407,15 +400,13 @@ class SourcestatsLogger
       player["skill_change"] = 0
       player["info"] = Player.get_player_info(info)
       player["object"] = Player.find_by_steam_id(server_id,player["info"])
-      if player["info"]["team_name"] and player["info"]["team_name"].size > 0
+      player["bot"] = player["object"].bot?
+      if not player["bot"] and player["info"]["team_name"] and player["info"]["team_name"].size > 0
         player["team"] = Team.find_by_name(server_id,player["info"]["team_name"])
       else
         player["team"] = Team.new
-        player["team"].id = 0        
       end
     end
-    #puts "--- DEBUG player_Details for #{server_id} and #{info}"
-    #puts player.inspect
     return player
   end
   
@@ -440,6 +431,9 @@ class SourcestatsLogger
     if victim and victim["object"] and victim["object"].id > 0
       player_event.victim_skill = victim["object"].skill
       player_event.victim_skill_change = victim["skill_change"]
+      if victim["bot"]
+        player_event.bot_victim = 1        
+      end
       if active_victim and active_victim.id > 0
         player_event.victim_kills = active_victim.kills
         player_event.victim_deaths = active_victim.deaths
