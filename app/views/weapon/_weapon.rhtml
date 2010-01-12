@@ -1,0 +1,6 @@
+<tr>
+  <td><%= weapon.label ? weapon.label : weapon.name %></td>
+  <td><%= weapon.highlight %></td>
+  <td><%= weapon.bonus %></td>
+  <td><%= link_to "Edit", :action => "edit", :id => weapon.id %>
+</tr>

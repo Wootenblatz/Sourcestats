@@ -1,0 +1,21 @@
+<% top_player = weapon_list.top_players_for_period(@server.start)[0] %>
+<% runner_up = weapon_list.top_players_for_period(@server.start)[1] %>
+<li>
+    <div class="block">
+		<div class="heading">
+			<% if not File.exist?("#{RAILS_ROOT}/public/images/weapons/weapon_#{weapon_list.name}.jpg") %>
+				<%="<!-- wget http://steamcommunity.com/public/images/gamestats/550/weapon_#{weapon_list.name.strip}.jpg -->" %>
+			<% end %>
+			<%= weapon_list.name %>
+		</div>
+		<b><%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %> </b> with <b><%= top_player.times %> </b>
+		<%= weapon_list.label ? weapon_list.label : weapon_list.name.pluralize %>. <br/>
+
+    <% if runner_up %>
+		Runner up is <%= link_to runner_up.display_name, player_show_url({:server_id => @server.server_id, :player_id => runner_up.player_id}) %> 
+		with <%= runner_up.times %>.<br/>
+		<% end %>
+		<%= weapon_list.uses %> total.
+    </div>
+</li>
+

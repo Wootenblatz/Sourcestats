@@ -5,6 +5,7 @@ class ProcessLogfiles
 
   def self.reset
   	ActiveRecord::Base.connection.execute("truncate players")    
+  	ActiveRecord::Base.connection.execute("truncate bots")
   	ActiveRecord::Base.connection.execute("truncate player_events")    
   	ActiveRecord::Base.connection.execute("truncate active_players")    
   	ActiveRecord::Base.connection.execute("truncate server_events")    
@@ -15,11 +16,11 @@ class ProcessLogfiles
     puts "
 
 *** process_logfiles.rb 
-*** This script is part of Source Stats by Zach Karpinski <zkarpinski@gmail.com>
+*** This script is part of Source Stats by Zach Karpinski
 *** Source Stats can be downloaded at http://sourcestats.unrife.net/
 
 This script can be invoked with the following command:
-ruby script/runner -e development ProcessLogfiles.run ip:port /path/to/srcds/logs/ ip:port sleep_interval
+ruby script/runner -e development ProcessLogfiles.run server_ip:port remote_ip:port /path/to/srcds/logs/ sleep_interval
 
 Arguments:
 
@@ -45,45 +46,53 @@ If you are processing data across a LAN or on the same server you can keep this 
     puts ARGV.inspect
   end
   def self.run
-    path = ARGV[3]
+    path = ARGV[4]
     if not File.exists?("#{path}/processed")
       Dir::mkdir("#{path}/processed")
     end
     
     # UDP will cause data loss if we send information too fast, set a throttle interval
-    if ARGV[5]
+    if ARGV[5] 
       sleep_time = ARGV[5]
     else
       sleep_time = 0.05
     end
     
     # Get our IP:port to send along with the logs
-    (host,port) = ARGV[2].split(":")
+    (host,port) = ARGV[3].split(":")
     
     # Create a UDP socket
     socket = UDPSocket.new
     socket.bind("",rand(10000).to_i + 40000)
     socket.connect(host,port)
     
+    # Setup variables for our server's ip:port
+    (server_ip,server_port) = ARGV[2].split(":")
+    expanded_ip = ""
+    ip_parts = server_ip.split(".").each { |x| expanded_ip += x.rjust(3,"0") + "_" }
+    
+    filenames = Dir.glob("#{path}/L#{expanded_ip}#{server_port}_*.log")
+    if not filenames or filenames.size < 1
+      # Old style log names
+      filenames = Dir.glob("#{path}/L*.log")      
+    end
+    
     # Find the log files in the directory we were given
-    for filename in Dir.new(path).entries.sort
-      if filename.downcase =~ /l(\d+?)\.log/
-        logfile_path = path + filename
-        
-        # Create an MD5 checksum of this logfile, so we can process it only once
-        digest = Digest::MD5.hexdigest(File.read(logfile_path))
+    for filename in filenames.sort
 
-        # Send the lines in this file
-        puts "Opening #{logfile_path} (MD5 = #{digest})"
-        log = File.new(logfile_path, "r")
-        while line = log.gets
-          socket.send("sourcestats.log||#{digest}||#{ARGV[4]}||#{line}",0)
-          if sleep_time != "false"
-            sleep(sleep_time.to_f)
-          end
+      # Create an MD5 checksum of this logfile, so we can process it only once
+      digest = Digest::MD5.hexdigest(File.read(filename))
+
+      # Send the lines in this file
+      puts "Opening #{filename} (MD5 = #{digest})"
+      log = File.new(filename, "r")
+      while line = log.gets
+        socket.send("sourcestats.log||#{digest}||#{ARGV[2]}||#{line}",0)
+        if sleep_time != "false"
+          sleep(sleep_time.to_f)
         end
-        log.close
       end
+      log.close
     end
     socket.close
   end  

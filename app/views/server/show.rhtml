@@ -41,7 +41,7 @@
 
 <% if @weapons.size > 0 %>
 	<div class="page-heading">Frequently used weapons</div>
-	<%= debug @weapons %>
+	<ul class="column"><%= render :partial => "weapon_list", :collection => @weapons %></ul>
 	<br/><br/>
 <% end %>
 

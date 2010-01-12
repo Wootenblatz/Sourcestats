@@ -12,4 +12,15 @@ class Weapon < ActiveRecord::Base
     end
     return weapon
   end
+  
+  def top_players_for_period(start)
+    Player.find(:all,
+                :select => "players.*, count(player_events.id) as times",
+                :joins => "inner join player_events on player_events.player_id = players.id",
+                :conditions => ["player_events.occurred_at > ? and player_events.weapon_id = ?", start, id],
+                :order => "times desc",
+                :group => "player_events.player_id", 
+                :limit => 3)
+  end
+
 end

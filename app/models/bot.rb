@@ -25,9 +25,9 @@ class Bot < ActiveRecord::Base
     
   def display_name
     if name and name.size > 0
-      "#{name}"
+      "#{name.capitalize}"
     else
-      "#{model}"
+      "#{model.capitalize}"
     end 
   end
   

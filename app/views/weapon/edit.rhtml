@@ -1,0 +1,32 @@
+<% form_for :weapon, @weapon, :url => { :action => "edit", :id => @weapon.id } do |f| %>
+<%= error_messages_for :weapon %>
+<fieldset>
+	<legend>Edit weapon Information</legend>
+	<ol>
+    <li>
+    	<label for="highlight">Highlight this weapon?</label><br/>
+      <%= f.select :highlight, %w{No Yes} %>
+    </li>
+    <li>
+    	<label for="name">Raw weapon name:</label>
+      <%= @weapon.name %><%= f.hidden_field :name, :value => @weapon.name %>
+    </li>
+    <li>
+    	<label for="label">Display Label:</label><br/>
+      <%= f.text_field :label, :size => 40 %>
+    </li>
+    <li>
+    	<label for="bonus">Skill bonus:</label><br/>
+      <%= f.text_field :bonus, :size => 4 %>
+    </li>    
+    
+  </ol>
+</fieldset>
+  <%= f.submit "Save" %> <%= link_to "Cancel", :action => "list", :server_id => @server.server_id, :page => 1 %>
+<% end %>
+
+
+
+
+
+
