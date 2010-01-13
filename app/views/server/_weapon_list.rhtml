@@ -11,8 +11,7 @@
     <% if runner_up %>
 		Runner up is <%= link_to runner_up.display_name, player_show_url({:server_id => @server.server_id, :player_id => runner_up.player_id}) %> 
 		with <%= runner_up.times %>. 
-		<% end %>
-		<%= weapon_list.uses %> total.
+	<% end %>
     </div>
 </li>
 
