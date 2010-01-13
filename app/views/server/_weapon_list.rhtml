@@ -3,10 +3,9 @@
 <li>
     <div class="block">
 		<div class="heading">
-			<%= weapon_list.label %>
+			<%= weapon_list.player_title %>
 		</div>
-		<b><%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %> </b> with <b><%= top_player.times %> </b>
-		kills<br/>
+		<b><%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %> </b> with <b><%= top_player.times %> </b> <%= weapon_list.label %> kills<br/>
 
     <% if runner_up %>
 		Runner up is <%= link_to runner_up.display_name, player_show_url({:server_id => @server.server_id, :player_id => runner_up.player_id}) %> 
