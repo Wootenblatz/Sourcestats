@@ -3,13 +3,19 @@ class Bot < ActiveRecord::Base
   belongs_to :server
 
   def self.load_bot(server_id,player_info)
+    # Left for dead style games can bring in bots before the last one is totally "disconnected"
+    # Lets strip off the auto-rename prefix just in case.
+    player_info["name"].gsub!(/^\((\d+?)\)/,"")
+    
+    # Use the bot's name to look it up on this server
     bot = find(:first,:conditions => ["server_id = ? and name = ?", server_id, player_info["name"]])    
-    if not bot
-      bot = Bot.new
-      bot.name = player_info["name"]
-      bot.model = player_info["model"]
-      bot.server_id = server_id
-      bot.save
+    if player_info["name"] and player_info["name"].size > 0
+      if not bot
+        bot = Bot.new
+        bot.name = player_info["name"]
+        bot.server_id = server_id
+        bot.save
+      end
     end
     return bot
   end

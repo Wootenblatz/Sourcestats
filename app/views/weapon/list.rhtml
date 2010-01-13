@@ -1,2 +1,8 @@
-<%= debug @weapons %>
+<div class="page-heading">Weapons</div>
+<table cellspacing='0' cellpadding='3' border='0' width='90%'>
+  <tr>
+    <th>Name</th><th>Highlighted</th><th>Bonus</th><th>Action</th>
+  </tr>
+<%= render :partial => "weapon", :collection => @weapons %>
+</table>
 

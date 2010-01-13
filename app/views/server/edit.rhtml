@@ -37,6 +37,10 @@
   		<%= f.text_field :port, :size => 6 %>
   	</li>
   	<li>
+  		<label for="bot_label">Label to Use for Bot Stats</label><br/>
+  		<%= f.text_field :bot_label, :size => 40 %>
+  	</li>
+  	<li>
   		<label for="timezone">Timezone</label> <br/>
   		<%= f.time_zone_select :timezone, ActiveSupport::TimeZone.all.sort %>
     </li>

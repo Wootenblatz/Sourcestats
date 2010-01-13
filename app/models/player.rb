@@ -93,29 +93,27 @@ class Player < ActiveRecord::Base
   
   def compute_skill(victim,weapon)
     player_skill = skill
+    if not player_skill or player_skill =~ /\D/ or player_skill < 1000
+      player_skill = 1000.0
+    end
+
     skills = Array.new
-    if victim["steam_id"] == "Bot"
-      skills[0] = player_skill + 0.1
+    bonus = 1.0
+    if weapon.bonus > 0.0
+      bonus = weapon.bonus
+    end
+
+    if victim.bot?
+      skills[0] = (victim.bonus * bonus)
       skills[1] = 0
     else
-      if id > 0 and victim and victim.id > 0 and id != victim.id and not victim.bot?
-        if not player_skill or player_skill =~ /\D/ or player_skill < 1000
-          player_skill = 1000.0
-        end
-
+      if id > 0 and victim and victim.id > 0 and id != victim.id 
         if not victim.skill or victim.skill =~ /\D/ or victim.skill < 1000
           victim.skill = 1000.0
         end
 
-        bonus = 1.0
-        if weapon.bonus > 0.0
-          bonus = weapon.bonus
-        end
         skills[0] = sprintf("%02.2f", (((victim.skill / player_skill) * bonus) * 10.0)).to_f
         skills[1] = sprintf("%02.2f", (((player_skill / victim.skill) * bonus) * 10.0)).to_f
-      elsif victim.bot?
-        skills[0] = player_skill + victim.bonus
-        skills[1] = 0
       end      
     end
     return skills

@@ -3,12 +3,11 @@ class CreateBotsTable < ActiveRecord::Migration
     create_table :bots do |t|
       t.integer :server_id, :default => 0
       t.string :name, :limit => 40, :null => false
-      t.string :model, :limit => 40
-      t.float :bonus, :default => 1.0
+      t.float :bonus, :default => 0.01
       t.timestamps
     end
     add_index :bots, :server_id
-    add_index :bots, :model
+    add_index :bots, :name
     
     add_column :player_events, :bot_victim, :integer, :default => 0
     add_index :player_events, :bot_victim

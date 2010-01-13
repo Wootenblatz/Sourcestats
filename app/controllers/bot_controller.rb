@@ -2,7 +2,7 @@ class BotController < PublicController
   before_filter :parse_server_id
   caches_page :list
   def list
-    @bots = @server.bots.paginate :page => params[:page] || 1
+    @bots = @server.bots.paginate :page => params[:page] || 1, :order => "name asc"
   end  
 
   def edit    

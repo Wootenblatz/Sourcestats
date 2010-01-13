@@ -45,7 +45,7 @@ class ServerController < PublicController
     # Find the most popular weapons
     @weapons = @server.weapons.find(:all,
                               :select => "weapons.*, count(player_events.id) as uses", 
-                              :conditions => ["player_events.occurred_at > ?",@server.start],
+                              :conditions => ["player_events.occurred_at > ? and highlight = ?",@server.start, "Yes"],
                               :joins => "inner join player_events on weapons.id = player_events.weapon_id",
                               :order => "uses desc",
                               :group => "weapons.id")

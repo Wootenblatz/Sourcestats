@@ -166,7 +166,7 @@ class SourcestatsLogger
         end
                 
         if not team and player_str and noun1 and event2 and noun2 and player and player["object"].id   > 0          
-          if event1 == "killed" or event1 == "attacked"
+          if event1 == "killed" or event1 == "attacked" or event1 == "was incapped by"
             victim = self.player_details(server.id,noun1)
             active_victim = ActivePlayer.find_by_steam_id(server.id,victim["info"],event_datetime)
             
@@ -181,17 +181,20 @@ class SourcestatsLogger
               active_player.team_kills += 1
               player["object"].skill -= 25
               player["skill_change"] = -25
-            elsif victim and victim["object"].id > 0 and not victim["bot"]
+            elsif victim and victim["object"].id > 0 
               skills = player["object"].compute_skill(victim["object"],weapon)
               player["skill_change"] = skills[0]
+              puts player.inspect
               player["object"].skill += skills[0]
-              player["object"].kills += 1
 
               if not victim["bot"]
+                player["object"].kills += 1
                 victim["skill_change"] = -1 * skills[1]
                 victim["object"].skill -= skills[1]
                 victim["object"].deaths += 1
                 active_victim.deaths += 1
+              else
+                player["object"].bot_kills += 1
               end
               #puts "Skill delta #{skills[0]} / #{skills[1]} || Results #{player["object"].skill} / #{victim["object"].skill}"
               active_player.kills += 1
@@ -400,11 +403,13 @@ class SourcestatsLogger
       player["skill_change"] = 0
       player["info"] = Player.get_player_info(info)
       player["object"] = Player.find_by_steam_id(server_id,player["info"])
-      player["bot"] = player["object"].bot?
-      if not player["bot"] and player["info"]["team_name"] and player["info"]["team_name"].size > 0
-        player["team"] = Team.find_by_name(server_id,player["info"]["team_name"])
-      else
-        player["team"] = Team.new
+      if player["object"]
+        player["bot"] = player["object"].bot?
+        if not player["bot"] and player["info"]["team_name"] and player["info"]["team_name"].size > 0
+          player["team"] = Team.find_by_name(server_id,player["info"]["team_name"])
+        else
+          player["team"] = Team.new
+        end
       end
     end
     return player
