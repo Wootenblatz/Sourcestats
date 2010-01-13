@@ -18,6 +18,21 @@ class Server < ActiveRecord::Base
   validates_format_of :ip, :with => /^(\d{1,3}\.){3}\d{1,3}$/
   validates_numericality_of :port
   
+  def is_admin?(remote_ip)
+    flag = false
+    # Strip out carriage returns and then split on new-lines
+    admin_ip_list.gsub!(/\r/,"")  
+    admin_ip_list.split(/\n/).each do |ip|
+      # Make sure any white space or special characters are on the IP
+      ip.chomp!
+      ip.strip!
+      if not flag and remote_ip =~ /#{ip}/
+        flag = true
+      end
+    end
+    return flag
+  end
+  
   def server_id
     "#{id}-#{name.gsub(/\W/,"_")}"
   end

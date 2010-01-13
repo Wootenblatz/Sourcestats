@@ -8,6 +8,7 @@ class CreateServers < ActiveRecord::Migration
       t.column "status", :string, :limit => 8, :default => "inactive"
       t.column "max_players", :integer, :default => 24
       t.column "timezone", :string, :limit => 40, :default => "Central Time (US & Canada)"
+      t.column "admin_ip_list", :text, :default => "192.168\n10.\n172.16\n."
       t.timestamps
     end    
   end

@@ -18,6 +18,7 @@ class PublicController < ApplicationController
     if add_to_description.size > 0
       @metadescription += " " + add_to_description
     end
+    @ip = request.env["REMOTE_ADDR"]
   end
   def parse_server_id
     @server = nil
@@ -29,6 +30,13 @@ class PublicController < ApplicationController
       end
       @server = Server.find(@server_id,:conditions => ["status = ?","active"])
       add_to_seo("#{@server.name}",@server.name,@server.description.gsub(/\W/, " "))      
+    end
+  end
+  
+  def check_admin_access
+    if not @server.is_admin?(request.env["REMOTE_ADDR"])
+      flash[:error] = "Admin access required to view this page"
+      redirect_to "/"
     end
   end
 end

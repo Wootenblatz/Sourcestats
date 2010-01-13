@@ -41,6 +41,12 @@
   		<%= f.text_field :bot_label, :size => 40 %>
   	</li>
   	<li>
+  		<label for="admin_ip_list">IP Addresses for Admins</label><br/>
+		<font class="small">The system will do partial matching for these strings starting from the beginning.  Add to this list carefully as people can ruin your system if you give them access</font>
+		<br/>
+  		<%= f.text_area :admin_ip_list, :rows => 5, :cols => 20 %>
+  	</li>
+  	<li>
   		<label for="timezone">Timezone</label> <br/>
   		<%= f.time_zone_select :timezone, ActiveSupport::TimeZone.all.sort %>
     </li>

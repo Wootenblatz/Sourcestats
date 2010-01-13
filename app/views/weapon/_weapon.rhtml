@@ -2,5 +2,5 @@
   <td><%= weapon.label ? weapon.label : weapon.name %></td>
   <td><%= weapon.highlight %></td>
   <td><%= weapon.bonus %></td>
-  <td><%= link_to "Edit", :action => "edit", :id => weapon.id %>
+  <td><%= link_to "Edit", weapon_edit_url({:server_id => @server.server_id, :id => weapon.id}) %>
 </tr>

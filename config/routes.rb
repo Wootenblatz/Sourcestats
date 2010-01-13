@@ -1,15 +1,41 @@
 ActionController::Routing::Routes.draw do |map|
+  # Servers
   map.server_show '/server/show/:id', :controller => "server", :action => "show"
   map.server_list '/server/list/:page', :controller => "server", :action => "list", :requirements => { :page => /\d+/ }
+  
+  # Players
   map.player_show '/player/show/:server_id/:player_id/:page', :controller => "player", :action => "show", :requirements => { :page => /\d+/ }, :page => 1
   map.player_list '/player/list/:server_id/:page', :controller => "player", :action => "list", :requirements => { :page => /\d+/ }
+  map.player_edit '/player/list/:server_id/:id', :controller => "player", :action => "edit"
+  
+  # Events
   map.event_list '/event/list/:server_id/:page', :controller => "event", :action => "list", :requirements => { :page => /\d+/ }
+  map.event_edit '/event/edit/:server_id/:id', :controller => "event", :action => "edit"
+  
+  # Triggers
   map.trigger_list '/trigger/list/:server_id/:page', :controller => "trigger", :action => "list", :requirements => { :page => /\d+/ }
+  map.trigger_edit '/trigger/edit/:server_id/:id', :controller => "trigger", :action => "edit"
+  
+  # Weapons
   map.weapon_list '/weapon/list/:server_id/:page', :controller => "weapon", :action => "list", :requirements => { :page => /\d+/ }
+  map.weapon_edit '/weapon/edit/:server_id/:id', :controller => "weapon", :action => "edit"
+  
+  # Maps
   map.map_list '/map/list/:server_id/:page', :controller => "map", :action => "list", :requirements => { :page => /\d+/ }
+  map.map_edit '/map/edit/:server_id/:id', :controller => "map", :action => "edit"
+  
+  # Roles
   map.role_list '/role/list/:server_id/:page', :controller => "role", :action => "list", :requirements => { :page => /\d+/ }
+  map.role_edit '/role/edit/:server_id/:id', :controller => "role", :action => "edit"
+  
+  # Teams
   map.team_list '/team/list/:server_id/:page', :controller => "team", :action => "list", :requirements => { :page => /\d+/ }
+  map.team_edit '/team/edit/:server_id/:id', :controller => "team", :action => "edit"
+  
+  # Bots
   map.bot_list '/bot/list/:server_id/:page', :controller => "bot", :action => "list", :requirements => { :page => /\d+/ }
+  map.bot_edit '/weapon/edit/:server_id/:id', :controller => "bot", :action => "edit"
+  
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
   # The priority is based upon order of creation: first created -> highest priority.

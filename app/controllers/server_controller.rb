@@ -54,11 +54,16 @@ class ServerController < PublicController
   
   def edit
     @server = Server.find(params[:id])
-    if request.post?
-      @server.update_attributes(params[:server])
-      if @server.save
-        flash[:notice] = "#{@server.name} updated."
-        redirect_to :action => "list"
+    if not @server.is_admin?(request.env["REMOTE_ADDR"])
+      flash[:error] = "Admin access required to view this page"
+      redirect_to "/"
+    else
+      if request.post?
+        @server.update_attributes(params[:server])
+        if @server.save
+          flash[:notice] = "#{@server.name} updated."
+          redirect_to :action => "list"
+        end
       end
     end
   end

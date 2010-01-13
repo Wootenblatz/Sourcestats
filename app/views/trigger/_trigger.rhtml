@@ -2,5 +2,5 @@
   <td><%= trigger.label ? trigger.label : trigger.name %></td>
   <td><%= trigger.highlight %></td>
   <td><%= trigger.bonus %></td>
-  <td><%= link_to "Edit", :action => "edit", :id => trigger.id %>
+  <td><%= link_to "Edit", trigger_edit_url({:server_id => @server.server_id, :id => trigger.id}) %>
 </tr>

@@ -1,13 +1,15 @@
 class WeaponController < PublicController
   before_filter :parse_server_id
+  before_filter :check_admin_access, :only => [:edit]
+  
   caches_page :list
   def list
-    @weapons = @server.weapons.paginate :page => params[:page] || 1
+    @weapons = @server.weapons.paginate :page => params[:page] || 1, :order => "label desc,name desc"
   end  
+  
   def edit    
     @weapon = Weapon.find(params[:id])
-    @server = Server.find(@weapon.server_id)
-    if request.post?
+    if request.post? 
       @weapon.update_attributes(params[:weapon])
       if @weapon.save
         flash[:notice] = "#{@weapon.name} updated."
