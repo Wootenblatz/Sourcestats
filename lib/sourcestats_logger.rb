@@ -55,6 +55,7 @@ class SourcestatsLogger
         server.description = "New Source Server."
         server.status = "active"
         server.timeframe = 30
+        server.admin_ip_list = "."
         server.save(false)
       end
       
