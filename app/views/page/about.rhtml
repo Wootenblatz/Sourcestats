@@ -1,8 +1,12 @@
 <div class="page-heading">About Source Stats</div>
 <p>
-  I am creating this new stats program for games that use the valve logging standard. 
+  I am creating this new stats program for games that use <a href="http://developer.valvesoftware.com/wiki/HL_Log_Standard">the valve logging standard</a>. 
   To the best of my knowledge there are no stats applications out there made with Ruby on Rails. 
   I think Rails will lower the barrier to entry for server admins that want to host their own stats without paying for it.      
+
+</p>
+<p>
+	&lt;RANT&gt;The current state of L4D2 logs is a mess.&lt;/RANT&gt;  <a href="http://forums.steampowered.com/forums/showthread.php?t=1108577">Read my post</a> on the L4D2 steam forums to get a better idea of what I'm talking about.  If you support these improvements to the logging system for L4D2 please reply to that thread and say so.  Supporting L4D2 requires considerable deviation from <a href="http://developer.valvesoftware.com/wiki/HL_Log_Standard">the valve logging standard</a> without the use of mods.
 </p>
 <p>
   During the development of this application you can expect the server list and statistics to reset frequently and without warning.
@@ -21,6 +25,61 @@
 <p>
   TF2 Class icons created by <a href="http://Captain-Nintendork.deviantart.com/">Captain Nintendork</a><br/>
 </p>  
+<p>
+	I have put Sourcestats onto GitHub you can view the project page at the following url: <a href="http://github.com/zkarpinski/Sourcestats">http://github.com/zkarpinski/Sourcestats</a>.  Currently you have to be pretty familiar with Git, Ruby on Rails and MySQL in order to get this working.  I do not have any documentation written yet. 
+	<br/>
+	<br/>
+	Assuming you already have a web server and database (mysql) up and running, here are some hints:<br/>
+	<ol>
+		<li>Install <a href="http://rubyonrails.org/">Ruby on Rails</a></li>
+		<li>Install <a href="http://git-scm.com/download">Git</a></li>
+		<li>Configure your web server to run Rails &mdash; For Apache <a href="http://modrails.com/install.html">Passenger Phusion</a> is a good start</li>
+		<li>Check out sourcestats from git to your server's site folder<br /><blockquote>git clone http://github.com/zkarpinski/Sourcestats.git sourcestats</blockquote></li>
+		<li>Edit your web server's configuration to serve a site from the directory in the previous step</li>
+		<li>Passenger Phusion users should remember to use "RailsEnv production"</li>
+		<li>Edit config/database.yml to create your username, password and database name &mdash; This example uses sourcestats_production</li>
+		<li>Using mysql create the database and assign privileges to your user.  
+			<blockquote>
+				create database sourcestats_production;<br/>
+				grant all on sourcestats_production.* to username@localhost identified by 'password';
+			</blockquote>
+		</li>
+		<li>In the main directory of your site migrate to the latest version of the DB<br />
+			<blockquote>
+				rake db:migrate
+			</blockquote>
+		</li>
+		<li>In the main sourcestats directory start the log listener &mdash; Listens on UDP port 20808<br/>
+			<blockquote>ruby script/runner -e production SourcestatsLogger.listen</blockquote>
+		</li>
+		<li>Edit the server.cfg for your source based game server<br/>
+			<blockquote>
+				log on
+				logaddress_add 127.0.0.1:20808
+			</blockquote>
+		</li>
+	</ol>
+</p>
+<p>
+	You can run the log listener on a different server than your game server.  
+	This is helpful if your web site runs on a different machine than your game server does.  
+	You need to be sure to open port 20808 in your firewall.  
+	Instead of 127.0.0.1 be sure to use the IP address of your web server.
+</p>
+<p>
+	If you do not want the stats to update live you can process the actual logs during downtime using the process_logfile.rb script. This command takes four arguments and looks something like this:<br/>
+	<blockquote>
+		ruby script/runner -e development ProcessLogfiles.run 127.0.0.1:27015 127.0.0.1:20808 /games/steam/left4dead2/left4dead2/logs 0.005
+	</blockquote>
+	<br/>
+	This will process each log file once and make a record of it.  It will not process the same log twice.  The arguments are as follows:
+	<ol> 
+		<li>IP:Port of the game server</li>
+		<li>IP:Port of the Sourcestats log listener</li>
+		<li>Path to your log files</li>
+		<li>How long to wait between records - Data can get dropped if this is too low for your network latency</li>
+	</ol>
+</p>
 <br/>
 <div class="page-heading">About The Author</div>
 <p>My name is Zach Karpinski.  I am a computer programmer living in Milwaukee, WI.  I currently work for <a href="http://800ceoread.com">800 CEO Read</a> where I recently created a custom e-commerce site using Ruby on Rails.  It integrates with a variety of third party services and is a major improvement over the previous site they commissioned in 2004.</p>

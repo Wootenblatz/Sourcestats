@@ -12,6 +12,13 @@ a, a:visited, a:hover, a:active {
 	text-decoration: none;
 }
 
+blockquote {
+	margin-left: 20px;
+	border-left: 1px #999 solid;
+	background-color: #efefef;
+	padding: 10px;
+}
+
 .small {
 	font-size: 0.7em;
 }
