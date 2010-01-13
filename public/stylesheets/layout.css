@@ -18,6 +18,10 @@ body {
 	padding: 0;
 }
 
+#content {
+	margin-bottom: 50px;
+}
+
 .list-count {
 	margin: 0px 10px 0px 4px; 
 	width: 30px; 

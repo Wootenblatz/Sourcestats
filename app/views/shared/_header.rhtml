@@ -1,7 +1,7 @@
 <a href="/"><img src="/images/logo.png" border="0" /></a>
 <br clear="both" />
 <div class="left">
-<%= link_to "Blog", "http://unrife.net/2009/06/09/source-dedicated-server-statistics" %> - 
+<%= link_to "Blog", "/blog/index.html" %> - 
 <%= link_to "Server list", :controller => "server", :action => "list", :page => 1 %>
 <% if @server %>
 - <%= link_to(@server.name, server_show_url({:id => @server.server_id})) %>
