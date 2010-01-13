@@ -29,7 +29,7 @@
 	I have put Sourcestats onto GitHub you can view the project page at the following url: <a href="http://github.com/zkarpinski/Sourcestats">http://github.com/zkarpinski/Sourcestats</a>.  Currently you have to be pretty familiar with Git, Ruby on Rails and MySQL in order to get this working.  I do not have any documentation written yet. 
 	<br/>
 	<br/>
-	Assuming you already have a web server and database (mysql) up and running, here are some hints:<br/>
+	Assuming you already have a web server and database (mysql) up and running, here are some hints.  All commands assume you're on linux so change paths and commands as required for Windows.<br/>
 	<ol>
 		<li>Install <a href="http://rubyonrails.org/">Ruby on Rails</a></li>
 		<li>Install <a href="http://git-scm.com/download">Git</a></li>
@@ -54,12 +54,21 @@
 		</li>
 		<li>Edit the server.cfg for your source based game server<br/>
 			<blockquote>
-				log on
+				log on<br/>
 				logaddress_add 127.0.0.1:20808
+			</blockquote>
+		</li>
+		<li>
+			Give yourself admin access. Edit app/controllers/application_controller.rb<br/>change <em>your\.ip\.address\.here</em> to your IP with a \ in front of each dot &mdash; Example<br/>
+			<blockquote>
+				or ip =~ /^207\.97\.227\.239/
 			</blockquote>
 		</li>
 	</ol>
 </p>
+
+<p><b>That should be it!</b></p>
+
 <p>
 	You can run the log listener on a different server than your game server.  
 	This is helpful if your web site runs on a different machine than your game server does.  
@@ -67,14 +76,20 @@
 	Instead of 127.0.0.1 be sure to use the IP address of your web server.
 </p>
 <p>
-	If you do not want the stats to update live you can process the actual logs during downtime using the process_logfile.rb script. This command takes four arguments and looks something like this:<br/>
+	If you do not want the stats to update in real-time you can process the logs during downtime using the process_logfile.rb script. Note that this process is slower than real-time logfile processing.  This command takes four arguments and looks something like this:<br/>
 	<blockquote>
-		ruby script/runner -e development ProcessLogfiles.run 127.0.0.1:27015 127.0.0.1:20808 /games/steam/left4dead2/left4dead2/logs 0.005
+		ruby script/runner -e development \<br/>
+		ProcessLogfiles.run \<br/>
+		127.0.0.1:27015 \<br/>
+		127.0.0.1:20808 \<br/>
+		/games/steam/left4dead2/left4dead2/logs \<br/>
+		0.005
 	</blockquote>
-	<br/>
+</p>
+<p>
 	This will process each log file once and make a record of it.  It will not process the same log twice.  The arguments are as follows:
 	<ol> 
-		<li>IP:Port of the game server</li>
+		<li>IP:Port of the game server (internal IP if it uses one)</li>
 		<li>IP:Port of the Sourcestats log listener</li>
 		<li>Path to your log files</li>
 		<li>How long to wait between records - Data can get dropped if this is too low for your network latency</li>

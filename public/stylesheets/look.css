@@ -3,7 +3,7 @@ body {
 	font-size: 0.9em;
 }
 
-p {
+p, li {
 	font-size: 0.9em;
 }
 
@@ -17,6 +17,8 @@ blockquote {
 	border-left: 1px #999 solid;
 	background-color: #efefef;
 	padding: 10px;
+	font-size: 80%;
+	font-family: AndaleMono, Monaco, 'Courier New', Courier;
 }
 
 .small {
