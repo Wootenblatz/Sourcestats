@@ -3,7 +3,8 @@
 <li>
     <div class="block">
 		<div class="heading">
-			<%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %> is <%= weapon_list.player_title %>
+			<%= weapon_list.player_title %><br/>
+			<%= link_to top_player.display_name, player_show_url({:server_id => @server.server_id, :player_id => top_player.player_id}) %>
 		</div>
 		<b><%= top_player.times %> </b> <%= weapon_list.label %> kills<br/>
 
