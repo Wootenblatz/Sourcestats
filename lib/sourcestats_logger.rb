@@ -32,6 +32,11 @@ class SourcestatsLogger
     
     puts "Listening for log address data..."
     loop do
+      trap("INT") { 
+        puts "User requested exit."
+        socket.close
+        exit
+      }
       msg, sender = socket.recvfrom(8096)
       remote_ip = sender[3]
       remote_port = sender[1]
@@ -69,6 +74,8 @@ class SourcestatsLogger
               @logfile.save
               msg = ""
             end
+          else
+            msg = ""
           end
         else
           @logfile = LogRecord.new

@@ -95,6 +95,7 @@ overflow: visible;
 .player-list-deaths { width: 10%; }
 .player-list-skill { width: 10%; }
 .player-list-efficiency { width: 10%; }
+.list-auto { float: left; width: auto; overflow: hidden; display: block;}
 
 .left, .left-border { float: left; }
 .right, .right-border { float: right; }

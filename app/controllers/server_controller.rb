@@ -1,5 +1,6 @@
 class ServerController < PublicController
   caches_page :list, :show
+
    
   def list
     @servers = Server.paginate :page => params[:page] || 1, :conditions => ["status = ?","active"], :order => "name asc"
@@ -7,6 +8,17 @@ class ServerController < PublicController
   
   def show
     @server = Server.find(params[:id])
+    
+    @remote_server = SourceServer.new(IPAddr.new(@server.ip), @server.port)
+    if @remote_server
+      @remote_server.init
+      if @server.name == "Source Dedicated Server" and @remote_server
+        @server.name = @remote_server.get_server_info["server_name"]
+        @server.save
+      end
+      @live_players = @remote_server.get_players
+      @live_server_info = @remote_server.get_server_info
+    end
     @events = @server.events.find(:all, :conditions => ["highlight = ?", "Yes"])
     
     # Load our triggers and count how many times they happened
@@ -49,6 +61,7 @@ class ServerController < PublicController
                               :joins => "inner join player_events on weapons.id = player_events.weapon_id",
                               :order => "uses desc",
                               :group => "weapons.id")
+                              
     add_to_seo(@server.name,@server.name,@server.description.gsub(/\W/, " "))
   end
   

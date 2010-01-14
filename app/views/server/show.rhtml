@@ -1,3 +1,25 @@
+
+<% if @remote_server %>
+	<div class="page-heading">Live Server Status -
+	<% if @live_players.size > 0 %>
+		<%= @live_players.size %>/<%= @live_server_info["max_players"] %> user<%= @live_players.size > 1 ? "s are" : " is" %> playing <%= @live_server_info["map_name"] %>
+	<% else %>
+		No one online
+	<% end %>
+	</div>
+	<br/>
+	<div class="player-list-line">
+		<div class="list-count">&nbsp;</div>
+		<div class="player-list-name"><b>Name</b></div>
+		<div class="player-list-kills"><b>Score</b></div>
+		<div class="list-auto"><b>Time on server</b></div>
+	</div>
+	
+	<%= render :partial => "live_player", :collection => @live_players %>
+<% end %>
+
+<br/>
+
 <% if @top10 and @top10.size > 0 %>
   <div class="page-heading">Top scores since <%= ap_date(@server.start) %></div>
   <% @count = 1 %>
@@ -50,6 +72,8 @@
 	<%= debug @maps %>
 	<br/><br/>
 <% end %>
+
+<%= (debug @remote_server).to_s.gsub(/\n/,"<br/>") %>
 
 <% content_for :searchform do %>
   <%= render :partial => "player/search_form" %>

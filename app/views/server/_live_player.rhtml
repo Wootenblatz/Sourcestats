@@ -1,0 +1,6 @@
+<div class="player-list-line">
+	<div class="list-count"><%= live_player_counter + 1%>.</div>
+	<div class="player-list-name"><%= live_player[0] and live_player[0].size > 1 ? live_player[1].name : "*** Player connecting ***" %></div>
+	<div class="player-list-kills"><%= live_player[1].score %></div>
+	<div class="player-list-deaths"><%= distance_of_time_in_words(live_player[1].connect_time) %></div>
+</div>

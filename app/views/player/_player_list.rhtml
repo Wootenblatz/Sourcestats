@@ -4,6 +4,6 @@
 	<div class="player-list-kills"><%= total_kills = player_list.kills_for_period(@server.start) %></div>
 	<div class="player-list-deaths"><%= total_deaths = player_list.deaths_for_period(@server.start) %></div>
 	<div class="player-list-efficiency"><%= player_list.efficiency(total_kills, total_deaths) %></div>
-	<div class="player-list-skill"><%= sprintf("%0.2f", player_list.attributes["skill_change"]) %></div>
+	<div class="list-auto"><%= sprintf("%0.2f", player_list.attributes["skill_change"]) %></div>
 </div>
 <% @count += 1 %>

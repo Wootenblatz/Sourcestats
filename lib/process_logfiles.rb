@@ -24,15 +24,15 @@ ruby script/runner -e development ProcessLogfiles.run server_ip:port remote_ip:p
 
 Arguments:
 
+server ip:port
+This is the IP and PORT that your source server can be connected to from the internet.  
+
 remote ip:port
 This is the IP address and PORT that the SourceStats Logger script is listening on.  This script makes a outgoing connection to this ip:port.
 The port is 20808 by default.
 
 /path/to/srcds/logs/
 The directory that contains the logs you want to have processed.  Please tack on the trailing slash.
-
-server ip:port
-This is the IP and PORT that your source server can be connected to from the internet.  
 
 sleep_interval
 Default is 0.05 seconds.  Since logaddress uses UDP the logging system does as well.  UDP is not a stateful connection and that means
@@ -68,14 +68,8 @@ If you are processing data across a LAN or on the same server you can keep this 
     
     # Setup variables for our server's ip:port
     (server_ip,server_port) = ARGV[2].split(":")
-    expanded_ip = ""
-    ip_parts = server_ip.split(".").each { |x| expanded_ip += x.rjust(3,"0") + "_" }
-    
-    filenames = Dir.glob("#{path}/L#{expanded_ip}#{server_port}_*.log")
-    if not filenames or filenames.size < 1
-      # Old style log names
-      filenames = Dir.glob("#{path}/L*.log")      
-    end
+
+    filenames = Dir.glob("#{path}/L*.log")      
     
     # Find the log files in the directory we were given
     for filename in filenames.sort
