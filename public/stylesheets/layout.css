@@ -22,6 +22,29 @@ body {
 	margin-bottom: 50px;
 }
 
+#content-left {
+float: left;
+margin-left: 10px;
+margin-right: 30px;
+width: 475px;
+height: auto;
+position: relative;
+display: block;
+}
+
+#content-sidebar {
+float: right;
+border-left: 1px #d8d8d8 solid;
+margin-left: 0px;
+margin-right: 10px;
+padding-left: 40px;
+width: 300px;
+height: auto;
+position: relative;
+display: block;
+overflow: visible;
+}
+
 .list-count {
 	margin: 0px 10px 0px 4px; 
 	width: 30px; 

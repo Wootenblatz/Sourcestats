@@ -20,6 +20,9 @@ class Event < ActiveRecord::Base
       event = Event.new
       event.server_id = server_id
       event.name = event_name
+      if event_name == "was incapped by"
+        event.bonus = -25
+      end
       event.save
     end
     return event

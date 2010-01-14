@@ -156,12 +156,17 @@ class SourcestatsLogger
 
       if player_str 
         player = self.player_details(server.id,player_str)
+        if player["info"] and player["info"]["state"]
+          player_state = PlayerState.load(server.id,player["info"]["state"])
+        end
       end
       if not player or player["bot"]
         return
       end
       
-      if event1 and event1.size > 1            
+      if event1 and event1.size > 1  
+        event = Event.find_by_name(server.id,event1)
+                  
         if player_str and player_str.size > 0
             active_player = ActivePlayer.find_by_steam_id(server.id,player["info"],event_datetime)
         end
@@ -183,25 +188,25 @@ class SourcestatsLogger
               player["object"].skill -= 25
               player["skill_change"] = -25
             elsif victim and victim["object"].id > 0 
-              skills = player["object"].compute_skill(victim["object"],weapon)
-              player["skill_change"] = skills[0]
-              puts player.inspect
-              player["object"].skill += skills[0]
-
-              if not victim["bot"]
-                player["object"].kills += 1
-                victim["skill_change"] = -1 * skills[1]
-                victim["object"].skill -= skills[1]
-                victim["object"].deaths += 1
-                active_victim.deaths += 1
-              else
-                player["object"].bot_kills += 1
-              end
-              #puts "Skill delta #{skills[0]} / #{skills[1]} || Results #{player["object"].skill} / #{victim["object"].skill}"
-              active_player.kills += 1
               
-              # Check for the custom kill property
               if event1 == "killed"
+                skills = player["object"].compute_skill(victim["object"],weapon)
+                player["skill_change"] = skills[0]
+                player["object"].skill += skills[0]
+
+                if not victim["bot"]
+                  player["object"].kills += 1
+                  victim["skill_change"] = -1 * skills[1]
+                  victim["object"].skill -= skills[1]
+                  victim["object"].deaths += 1
+                  active_victim.deaths += 1
+                else
+                  player["object"].bot_kills += 1
+                end
+                #puts "Skill delta #{skills[0]} / #{skills[1]} || Results #{player["object"].skill} / #{victim["object"].skill}"
+                active_player.kills += 1
+
+                # Check for the custom kill property
                 properties = results["properties"].scan(/\((.+?)\)/)
                 for property in properties
                   if property[0] =~ /customkill \"(\w+?)\"/ or property[0] =~ /headshot/
@@ -212,6 +217,10 @@ class SourcestatsLogger
                     end
                   end
                 end
+              elsif event1 == "was incapped by"
+                player["skill_change"] = event.bonus
+                player["object"].incapped += 1
+                player["object"].skill += event.bonus                
               end
             end
           elsif event1 == "triggered" and event2 == "against"            
@@ -322,7 +331,6 @@ class SourcestatsLogger
     if save > 0 
       event1.gsub!(/"/, '')
       if event1 !~ /=/
-        event = Event.find_by_name(server.id,event1)
         if event_type == "player"    
           if player and player["object"] and player["object"].id > 0            
             if not role_id

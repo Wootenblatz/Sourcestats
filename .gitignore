@@ -6,4 +6,4 @@ db/schema.rb
 db/sphinx
 :2e*
 .AppleDouble
-
+public/blog

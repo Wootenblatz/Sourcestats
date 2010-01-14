@@ -9,7 +9,10 @@
 
 <div class="left" style="margin-right: 40px;">
   <div class="page-heading">Player Details for <%= link_to @player.display_name, steam_profile_url(@player), {:target => "NEW"} %></div>
-  All time totals: <%= @player.kills %> kills, <%= @player.deaths %> deaths<% if @player.bot_kills.to_i > 0 %>, <%= @player.bot_kills %> <%= @server.bot_label.downcase %> kills<% end %>
+  All time totals: <%= @player.kills %> kills, <%= @player.deaths %> deaths<% if @player.bot_kills.to_i > 0 %>, <%= @player.bot_kills %> <%= @server.bot_label.downcase %> kills, <% end %>
+  <% if @player.incapped > 0 %>
+    <%= @player.incapped %> incapacitations, 
+  <% end %>
   and <%= @player.suicides %> suicides.<br/>
   Total Skill: <%= @player.skill %><br/>
   Has played <%= distance_of_time_in_words(@player.total_time) %> total.<br/>

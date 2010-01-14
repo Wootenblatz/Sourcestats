@@ -54,6 +54,14 @@ input, textarea {
 	text-align: left;	
 }
 
+#content {
+	background-color: #fff;
+	border: 1px #d8d8d8 solid;
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px;
+	padding: 10px;
+}
+
 #server-list-header, #player-list-header {
 	font-family: GillSans, Trebuchet, Calibri, sans-serif;
 	font-weight: bold;
