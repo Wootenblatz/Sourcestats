@@ -12,12 +12,13 @@ class ServerController < PublicController
     @remote_server = SourceServer.new(IPAddr.new(@server.ip), @server.port)
     if @remote_server
       @remote_server.init
-      if @server.name == "Source Dedicated Server" and @remote_server
-        @server.name = @remote_server.get_server_info["server_name"]
-        @server.save
-      end
       @live_players = @remote_server.get_players
       @live_server_info = @remote_server.get_server_info
+      if @server.name != @live_server_info["server_name"]
+        @server.name = @live_server_info["server_name"]
+        @server.max_players = @live_server_info["max_players"]
+        @server.save
+      end
     end
     @events = @server.events.find(:all, :conditions => ["highlight = ?", "Yes"])
     

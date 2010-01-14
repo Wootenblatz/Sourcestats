@@ -1,11 +1,7 @@
 
-<% if @remote_server %>
+<% if @remote_server and @live_players and @live_players.size > 0%>
 	<div class="page-heading">Live Server Status -
-	<% if @live_players.size > 0 %>
-		<%= @live_players.size %>/<%= @live_server_info["max_players"] %> user<%= @live_players.size > 1 ? "s are" : " is" %> playing <%= @live_server_info["map_name"] %>
-	<% else %>
-		No one online
-	<% end %>
+	<%= @live_players.size %>/<%= @live_server_info["max_players"] %> user<%= @live_players.size > 1 ? "s are" : " is" %> playing <%= @live_server_info["map_name"] %>
 	</div>
 	<br/>
 	<div class="player-list-line">
