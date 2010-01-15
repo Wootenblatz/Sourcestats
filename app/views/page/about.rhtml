@@ -1,3 +1,4 @@
+<%= render :partial => "shared/ad" %>
 <div class="page-heading">About Source Stats</div>
 <p>
   I am creating this new stats program for games that use <a href="http://developer.valvesoftware.com/wiki/HL_Log_Standard">the valve logging standard</a>. 
@@ -25,6 +26,27 @@
 <p>
   TF2 Class icons created by <a href="http://Captain-Nintendork.deviantart.com/">Captain Nintendork</a><br/>
 </p>  
+
+<br/>
+<hr size='1' width='650' align="left" />
+<br/>
+
+<div class="page-heading">Can't host your own stats? Help me!</div>
+<p>
+While I am developing this program, I could really use test data.  Not for just L4D2 but all source based games.  If you want to help me out you only need to add two lines to your server.cfg:<br/>
+<blockquote>
+	log on<br/>
+	logaddress_add 127.0.0.1:20808
+</blockquote>
+<br/>
+After that your server will send log data to this site.  If you use another program like <a hrefe="http://www.hlxcommunity.com/">HLStatsX CE</a>, keep that logaddress_add line in your server.cfg and it'll send to both.
+</p>
+
+<br/>
+<hr size='1' width='650' align="left" />
+<br/>
+
+<div class="page-heading">Want to run Sourcestats on your own server?</div>
 <p>
 	I have put Sourcestats onto GitHub you can view the project page at the following url: <a href="http://github.com/zkarpinski/Sourcestats">http://github.com/zkarpinski/Sourcestats</a>.  Currently you have to be pretty familiar with Git, Ruby on Rails and MySQL in order to get this working.  I do not have any documentation written yet. 
 	<br/>
@@ -44,6 +66,7 @@
 				grant all on sourcestats_production.* to username@localhost identified by 'password';
 			</blockquote>
 		</li>
+		<li>Install required gems:<br/><blockquote>sudo gem install steam-condenser will_paginate</blockquote>
 		<li>In the main directory of your site migrate to the latest version of the DB<br />
 			<blockquote>
 				rake db:migrate
@@ -59,15 +82,10 @@
 			</blockquote>
 		</li>
 		<li>
-			Give yourself admin access. Edit app/controllers/application_controller.rb<br/>change <em>your\.ip\.address\.here</em> to your IP with a \ in front of each dot &mdash; Example<br/>
-			<blockquote>
-				or ip =~ /^207\.97\.227\.239/
-			</blockquote>
+			<b>Secure your server!</b> Load your site in a web browser after the server is sending logs.  Click the "Admin" link next to the new server.  Enter part or all of your administrative IP addresses, one per line in the appropriate field.  
 		</li>
 	</ol>
 </p>
-
-<p><b>That should be it!</b></p>
 
 <p>
 	You can run the log listener on a different server than your game server.  
@@ -76,7 +94,9 @@
 	Instead of 127.0.0.1 be sure to use the IP address of your web server.
 </p>
 <p>
-	If you do not want the stats to update in real-time you can process the logs during downtime using the process_logfile.rb script. Note that this process is slower than real-time logfile processing.  This command takes four arguments and looks something like this:<br/>
+	<b>Alternate method of sending logs</b><br/>
+	If you do not want the stats to update in real-time you can process the logs during downtime using the process_logfile.rb script. Note that this process is slower than real-time logfile processing.  This will read a directory for <i>physical</i> logfiles.  It opens the files and then sends them to the log listener.  Extra data is sent along to avoid reprocessing the same log twice.  <br/><br/>
+	This command takes four arguments and looks something like this:<br/>
 	<blockquote>
 		ruby script/runner -e development \<br/>
 		ProcessLogfiles.run \<br/>
@@ -89,7 +109,7 @@
 <p>
 	This will process each log file once and make a record of it.  It will not process the same log twice.  The arguments are as follows:
 	<ol> 
-		<li>IP:Port of the game server (internal IP if it uses one)</li>
+		<li>External IP:Port of the game server</li>
 		<li>IP:Port of the Sourcestats log listener</li>
 		<li>Path to your log files</li>
 		<li>How long to wait between records - Data can get dropped if this is too low for your network latency</li>
