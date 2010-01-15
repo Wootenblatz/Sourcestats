@@ -1,20 +1,4 @@
-
-<% if @remote_server and @live_players and @live_players.size > 0%>
-	<div class="page-heading">Live Server Status -
-	<%= @live_players.size %>/<%= @live_server_info["max_players"] %> user<%= @live_players.size > 1 ? "s are" : " is" %> playing <%= @live_server_info["map_name"] %>
-	</div>
-	<br/>
-	<div class="player-list-line">
-		<div class="list-count">&nbsp;</div>
-		<div class="player-list-name"><b>Name</b></div>
-		<div class="player-list-kills"><b>Score</b></div>
-		<div class="list-auto"><b>Time on server</b></div>
-	</div>
-	
-	<%= render :partial => "live_player", :collection => @live_players %>
-<% end %>
-
-<br/>
+<div id="live-stats"></div>
 
 <% if @top10 and @top10.size > 0 %>
   <div class="page-heading">Top scores since <%= ap_date(@server.start) %></div>
@@ -23,8 +7,8 @@
   	<div class="list-count">&nbsp;</div>
   	<div class="player-list-name">Name</div>
   	<div class="player-list-kills">Kills</div>
+  	<div class="player-list-headshots">Headshots</div>
   	<div class="player-list-deaths">Deaths</div>
-  	<div class="player-list-efficiency">K:D&nbsp;</div>
   	<div class="player-list-skill">Score</div>
   </div>
   <br clear="both" />
@@ -69,6 +53,9 @@
 	<br/><br/>
 <% end %>
 
+<script type="text/javascript">$("#live-stats").load("/server/info/<%= @server.id %>?format=detailed");</script>
+
 <% content_for :searchform do %>
   <%= render :partial => "player/search_form" %>
 <% end %>
+

@@ -69,7 +69,7 @@ overflow: visible;
 	vertical-align: middle;
 }
 
-.trigger-list, .server-list-field, .player-list-name, .player-list-field, .player-list-kills, .player-list-deaths, .player-list-skill, .player-list-efficiency {
+.trigger-list, .server-list-field, .player-list-name, .player-list-field, .player-list-kills, .player-list-deaths, .player-list-skill, .player-list-efficiency, .player-list-headshots, .player-list-score {
 	vertical-align: middle;
 	padding: 2px;
 	float: left;
@@ -91,10 +91,12 @@ overflow: visible;
 
 .server-list-field { margin-right: 10px;}
 .player-list-name { width: 50%; } 
-.player-list-kills { width: 10%; }
-.player-list-deaths { width: 10%; }
-.player-list-skill { width: 10%; }
-.player-list-efficiency { width: 10%; }
+.player-list-kills { width: 10%; text-align: center; }
+.player-list-deaths { width: 10%; text-align: center; }
+.player-list-skill { width: 10%; text-align: center; }
+.player-list-headshots { width: 10%; text-align: center; }
+.player-list-score { width: 10%; text-align: center; }
+
 .list-auto { float: left; width: auto; overflow: hidden; display: block;}
 
 .left, .left-border { float: left; }

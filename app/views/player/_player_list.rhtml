@@ -2,8 +2,8 @@
 	<div class="list-count"><%= @count %>.</div>
 	<div class="player-list-name"><%= role_icon(player_list.favorite_role, 20) %><%= link_to player_list.display_name, player_show_url({:server_id => @server.server_id, :player_id => player_list.player_id}) %></div>
 	<div class="player-list-kills"><%= total_kills = player_list.kills_for_period(@server.start) %></div>
+	<div class="player-list-headshots"><%= player_list.trigger_count(@server.start,"headshot") %></div>
 	<div class="player-list-deaths"><%= total_deaths = player_list.deaths_for_period(@server.start) %></div>
-	<div class="player-list-efficiency"><%= player_list.efficiency(total_kills, total_deaths) %></div>
-	<div class="list-auto"><%= sprintf("%0.2f", player_list.attributes["skill_change"]) %></div>
+	<div class="player-list-score"><%= sprintf("%0.2f", player_list.attributes["skill_change"]) %></div>
 </div>
 <% @count += 1 %>

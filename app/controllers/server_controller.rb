@@ -6,20 +6,26 @@ class ServerController < PublicController
     @servers = Server.paginate :page => params[:page] || 1, :conditions => ["status = ?","active"], :order => "name asc"
   end
   
+  def info
+      @server = Server.find(params[:id])
+      @remote_server = SourceServer.new(IPAddr.new(@server.ip), @server.port)
+      if @remote_server
+        @remote_server.init
+        @live_players = @remote_server.get_players
+        @live_server_info = @remote_server.get_server_info
+        if @server.name != @live_server_info["server_name"]
+          @server.name = @live_server_info["server_name"]
+        elsif @server.max_players < @live_server_info["max_players"]
+          @server.max_players = @live_server_info["max_players"]        
+        end
+        @server.save if @server.changed?
+      end      
+    render :layout => false
+  end
+  
   def show
     @server = Server.find(params[:id])
     
-    @remote_server = SourceServer.new(IPAddr.new(@server.ip), @server.port)
-    if @remote_server
-      @remote_server.init
-      @live_players = @remote_server.get_players
-      @live_server_info = @remote_server.get_server_info
-      if @server.name != @live_server_info["server_name"]
-        @server.name = @live_server_info["server_name"]
-        @server.max_players = @live_server_info["max_players"]
-        @server.save
-      end
-    end
     @events = @server.events.find(:all, :conditions => ["highlight = ?", "Yes"])
     
     # Load our triggers and count how many times they happened

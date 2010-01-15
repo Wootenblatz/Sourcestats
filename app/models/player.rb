@@ -149,10 +149,19 @@ class Player < ActiveRecord::Base
                                        trigger_id, id, victim_id])     
   end
   
+  def trigger_count(start, trigger_name)
+    count = 0
+    trigger = Trigger.find(:first, :conditions => ["server_id = ? and name = ?", server_id, trigger_name])
+    if trigger
+      count = PlayerEvent.count(:conditions => ["trigger_id = ? and player_id = ? and occurred_at > ?", trigger.id, id, start])
+    end
+    return count
+  end
+  
   def calculate_skill_for_period(start)
     total_skill = 0.0
-    positive = Player.find_by_sql("select sum(skill_change) as skill_change from player_events where player_id = #{id} group by player_id limit 1")[0]
-    negative = Player.find_by_sql("select sum(victim_skill_change) as skill_change from player_events where victim_id = #{id} group by victim_id limit 1")[0]
+    positive = Player.find_by_sql("select sum(skill_change) as skill_change from player_events where player_id = #{id} and player_events.occurred_at > '#{start}' group by player_id limit 1")[0]
+    negative = Player.find_by_sql("select sum(victim_skill_change) as skill_change from player_events where victim_id = #{id} and player_events.occurred_at > '#{start}' group by victim_id limit 1")[0]
     if positive
       total_skill += positive.attributes["skill_change"].to_f
     end

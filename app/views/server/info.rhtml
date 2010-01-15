@@ -1,0 +1,21 @@
+<% if @remote_server and @live_players and @live_players.size > 0%>
+	<% if params[:format] == "detailed" %>
+		<div class="page-heading">Live Server Status -
+		<%= @live_players.size %> of <%= @live_server_info["max_players"] %> user<%= @live_players.size > 1 ? "s are" : " is" %> playing <%= @live_server_info["map_name"] %>
+		</div>
+		<br/>
+		<div class="player-list-line">
+			<div class="list-count">&nbsp;</div>
+			<div class="player-list-name"><b>Name</b></div>
+			<div class="player-list-kills"><b>Score</b></div>
+			<div class="list-auto"><b>Time on server</b></div>
+		</div>
+	
+		<%= render :partial => "live_player", :collection => @live_players %>
+		<br/>
+	<% elsif params[:format] == "summary" %>
+		-
+		<%= @live_players.size %> player<%= @live_players.size > 1 ? "s " : "" %> in <%= @live_server_info["map_name"] %>
+	<% end %>
+<% end %>
+

@@ -2,11 +2,13 @@
 <div class='server-list-line'>
 	<div class='server-list-field'>
 		<div class="page-heading"><%= link_to("#{server.name}", server_show_url({:id => server.server_id })) %></div>
-		<%= server.description %> --  <%= "#{server.ip}:#{server.port}" %> --
-		<%= server.max_players > 0 ? server.max_players : 24 %> player limit
+		<%= server.description %><br/>
+		<%= "#{server.ip}:#{server.port}" %> - <%= server.max_players > 0 ? server.max_players : 24 %> player limit 
+		<span class="live-stats-<%= server.id %>"></span> 
 		<% if admin_link.size > 0 %>
-		 -- <%= admin_link %>
+			-  <%= admin_link %>
 		<% end %>
-		
 	</div>
 </div>
+
+<script type="text/javascript">$(".live-stats-<%= server.id %>").load("/server/info/<%= server.id %>?format=summary");</script>
