@@ -25,7 +25,6 @@ class ServerController < PublicController
   
   def show
     @server = Server.find(params[:id])
-    
     @events = @server.events.find(:all, :conditions => ["highlight = ?", "Yes"])
     
     # Load our triggers and count how many times they happened

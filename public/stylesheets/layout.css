@@ -91,11 +91,11 @@ overflow: visible;
 
 .server-list-field { margin-right: 10px;}
 .player-list-name { width: 50%; } 
-.player-list-kills { width: 10%; text-align: center; }
-.player-list-deaths { width: 10%; text-align: center; }
-.player-list-skill { width: 10%; text-align: center; }
-.player-list-headshots { width: 10%; text-align: center; }
-.player-list-score { width: 10%; text-align: center; }
+.player-list-kills { width: 10%; }
+.player-list-deaths { width: 10%;}
+.player-list-skill { width: 10%; }
+.player-list-headshots { width: 10%; }
+.player-list-score { width: 10%;}
 
 .list-auto { float: left; width: auto; overflow: hidden; display: block;}
 
