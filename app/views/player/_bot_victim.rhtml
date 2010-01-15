@@ -1,0 +1,10 @@
+<% 
+  if @headshot.id
+    hs = @player.victim_triggers(@headshot.id,bot_victim.id)
+  end
+%>
+<tr>
+  <td><%= bot_victim.display_name %></td>
+  <td><%= bot_victim.deaths %></td>
+  <td><%= hs %></td>
+</tr>

@@ -22,6 +22,7 @@ class SourcestatsLogger
   }
 
   def self.listen
+    servers = Hash.new
     socket = UDPSocket.new
     puts "Binding to UDP port 20808 ..."
     socket.bind("", 20808)
@@ -52,16 +53,21 @@ class SourcestatsLogger
         remote_port = sourcestat_log[2].split(":")[1]
       end
 
-      server = Server.find(:first,:conditions => ["ip = ? and port = ?", remote_ip, remote_port])
-      if not server 
-        server = Server.new
-        server.ip = remote_ip
-        server.port = remote_port
-        server.description = "New Source Server."
-        server.status = "active"
-        server.timeframe = 30
-        server.admin_ip_list = "."
-        server.save(false)
+      if not servers["#{remote_ip}:#{remote_port}"]
+        server = Server.find(:first,:conditions => ["ip = ? and port = ?", remote_ip, remote_port])
+        if not server 
+          server = Server.new
+          server.ip = remote_ip
+          server.port = remote_port
+          server.description = "New Source Server."
+          server.status = "active"
+          server.timeframe = 30
+          server.admin_ip_list = "."
+          server.save(false)          
+        end
+        servers["#{remote_ip}:#{remote_port}"] = server
+      else
+        server = servers["#{remote_ip}:#{remote_port}"]
       end
       
       if md5

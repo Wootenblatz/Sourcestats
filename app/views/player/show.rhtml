@@ -27,8 +27,9 @@
   <table cellspacing="0" cellpadding="3" border="0" width="100%">
   <tr>
     <th><div class="page-heading">Victims</div></th>
-    <th>Killed</th>
-    <th>Died</th>
+    <th>Kills</th>
+    <th>Headshots</th>
+    <th>Deaths</th>
     <th>K:D</th>
   </tr>
   <%= render :partial => "victim", :collection => @victims %>
@@ -46,11 +47,10 @@
   <table cellspacing="0" cellpadding="3" border="0" width="100%">
   <tr>
     <th><div class="page-heading"><%= @server.bot_label %> Victims</div></th>
-    <th>Killed</th>
-    <th>Died</th>
-    <th>K:D</th>
+    <th>Kills</th>
+    <th>Headshots</th>
   </tr>
-  <%= render :partial => "victim", :collection => @bot_victims %>
+  <%= render :partial => "bot_victim", :collection => @bot_victims %>
   </table>
   <br/>
   <%= will_paginate @bot_victims %>

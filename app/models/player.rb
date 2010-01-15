@@ -144,6 +144,11 @@ class Player < ActiveRecord::Base
                                        kill_event_id, id, victim_id]) 
   end
   
+  def victim_triggers(trigger_id, victim_id)
+    PlayerEvent.count(:conditions => ["trigger_id = ? and player_id = ? and victim_id = ?", 
+                                       trigger_id, id, victim_id])     
+  end
+  
   def calculate_skill_for_period(start)
     total_skill = 0.0
     positive = Player.find_by_sql("select sum(skill_change) as skill_change from player_events where player_id = #{id} group by player_id limit 1")[0]

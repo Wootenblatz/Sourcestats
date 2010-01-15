@@ -1,7 +1,14 @@
+<% 
+  vk = victim.victim_kills(@kill_event.id,@player.id)
+  if @headshot.id
+    hs = @player.victim_triggers(@headshot.id,victim.id)
+  end
+%>
 <tr>
-  <td><%= victim.bot? ? victim.display_name : (link_to victim.display_name, player_show_url({:server_id => @server.server_id, :player_id => victim.player_id})) %></td>
+  <td><%= link_to victim.display_name, player_show_url({:server_id => @server.server_id, :player_id => victim.player_id}) %></td>
   <td><%= victim.deaths %></td>
-  <td><% vk = victim.victim_kills(@kill_event.id,@player.id) %><%= vk %></td>
+  <td><%= hs %></td>
+  <td><%= vk %></td>
   <td>
     <% if vk.to_i > 0 %>
       <%= sprintf("%0.2f",(victim.deaths.to_f / vk.to_f) )%>

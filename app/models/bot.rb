@@ -29,6 +29,11 @@ class Bot < ActiveRecord::Base
                                        kill_event_id, id, victim_id]) 
   end
     
+  def victim_triggers(trigger_id, victim_id)
+    PlayerEvent.count(:conditions => ["trigger_id = ? and player_id = ? and victim_id = ?", 
+                                       trigger_id, id, victim_id])     
+  end
+  
   def display_name
     if name and name.size > 0
       "#{name.capitalize}"

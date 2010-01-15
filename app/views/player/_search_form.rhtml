@@ -1,5 +1,6 @@
-<% form_for :player, :url => { :action => "list" } do |f| %>
+<% form_for :player, :url => { :controller => "player", :action => "list" } do |f| %>
 <input type="hidden" name="page" value="1" />
+<input type="hidden" name="server_id" value="<%= @server.id %>"/>
 <input type="text" name="search" size="20" />
 <%= f.submit "Search Players" %>
 <% end %>

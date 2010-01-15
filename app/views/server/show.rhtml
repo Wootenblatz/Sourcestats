@@ -69,8 +69,6 @@
 	<br/><br/>
 <% end %>
 
-<%= (debug @remote_server).to_s.gsub(/\n/,"<br/>") %>
-
 <% content_for :searchform do %>
   <%= render :partial => "player/search_form" %>
 <% end %>
